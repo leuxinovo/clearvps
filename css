@@ -1,0 +1,740 @@
+<!DOCTYPE html> <html lang="zh-CN"> <head> <meta charset="UTF-8"> <meta name="viewport" 
+    content="width=device-width, initial-scale=1.0"> <meta http-equiv="X-UA-Compatible" content="ie=edge"> <meta 
+    content="telephone=no" name="format-detection"> <title>星穹列车</title> <link rel="stylesheet" type="text/css" 
+    href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-y/semantic-ui/2.4.1/semantic.min.css"> <link 
+    href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-y/font-logos/0.17/font-logos.min.css" type="text/css" 
+    rel="stylesheet" /> <link 
+    href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/bootstrap-icons/1.8.1/font/bootstrap-icons.css" 
+    type="text/css" rel="stylesheet" /> <link rel="stylesheet" type="text/css" 
+    href="/static/semantic-ui-alerts.min.css"> <link rel="stylesheet" type="text/css" 
+    href="/static/main.css?v2022042314"> <link rel="shortcut icon" type="image/png" 
+    href="/static/logo.svg?v20210804" />
+</head> <body>
+    
+ <style> /* 屏幕适配 */ @media only screen and (min-width: 767px) { .ui.container { width: 85% !important;
+}
+}
+ 
+@media only screen and (max-width: 767px) { .ui.card>.content>.header:not(.ui), 
+    .ui.cards>.card>.content>.header:not(.ui) {
+        margin-top: 0.4em !important;
+    }
+}
+ 
+/* 整体图标 */ i.icon { color: #000; width: 1.2em !important;
+}
+ 
+/* 背景图片 */ body { content: " " !important; background: fixed !important; z-index: -1 !important; top: 0 
+    !important;
+    right: 0 !important; bottom: 0 !important; left: 0 !important; background-position: top !important; 
+    background-repeat: no-repeat !important; background-size: cover !important; background-image: 
+    url(https://upload-bbs.miyoushe.com/upload/2024/03/14/357876319/8392880c4afed7ac7ae4904d684ac4ba_1643227478506035655.jpeg?x-oss-process=image/auto-orient,0/interlace,1/format,jpeg) 
+    !important;
+    font-family: Arial,Helvetica,sans-serif !important;
+}
+ 
+/* 导航栏 */ .ui.large.menu { border: 0 !important; border-radius: 0px !important; background-color: rgba(255, 
+    255, 255, 55%) !important;
+}
+ 
+/* 首页按钮 */ .ui.menu .active.item { background-color: transparent !important;
+}
+ 
+/* 导航栏下拉框 */ .ui.ui.dropdown .menu { border: 0 !important; border-radius: 0 !important; background-color: 
+    rgba(255, 255, 255, 80%) !important;
+}
+ 
+/* 登陆按钮（需要使用配套自定义主题） */ .nezha-primary-btn { background-color: rgba(255, 255, 255, 0.8) 
+    !important; /* 80%透明白色 */
+    color: #000 !important;
+}
+ 
+.mochen-primary-btn { background-color: rgba(255, 255, 255, 0.8) !important; /* 80%透明白色 */ color: #000 
+    !important;
+    border-radius: 1rem !important; transition: all 0.5s;
+}
+ 
+.mochen-primary-btn:hover { background-color: rgba(247, 199, 111, 0.8) !important; /* 80%透明白色 */ color: #000 
+    !important;
+    border-radius: 1rem !important;
+}
+ 
+/* 大卡片 */
+#app .ui.fluid.accordion {
+    background-color: #fbfbfb26 !important; border-radius: 0.4rem !important;
+}
+ 
+/* 小卡片 */ .ui.four.cards>.card { border-radius: 0.6rem !important; background-color: #fafafaa3 !important;
+}
+ 
+.status.cards .wide.column { padding-top: 0 !important; padding-bottom: 0 !important; height: 2.3rem !important;
+}
+ 
+.status.cards .thirteen.wide.column { padding-left: 0rem !important; padding-right: 1.4rem !important;
+}
+ 
+.status.cards .three.wide.column { padding-left: 1.4rem !important; padding-right: 0rem !important;
+}
+ 
+.status.cards .wide.column:nth-child(1) { margin-top: 2rem !important;
+}
+ 
+.status.cards .wide.column:nth-child(2) { margin-top: 2rem !important;
+}
+ 
+.status.cards .description { padding-bottom: 0 !important;
+}
+  
+/* 弹出卡片图标 */ .status.cards .header > .info.icon { margin-right: 0 !important;
+}
+ 
+.nezha-secondary-font { color: #21ba45 !important;
+}
+ 
+/* 进度条 */ .ui.progress { border-radius: 50rem !important;
+}
+ 
+.ui.progress .bar { min-width: 1.8em !important; border-radius: 15px !important; line-height: 1.65em !important;
+}
+ 
+.ui.fine.progress> .bar { background-color: #f05b72 !important;
+}
+ 
+.ui.progress> .bar { background-color: #000 !important;
+}
+ 
+.ui.progress.fine .bar { background-color: #f05b72 !important;
+}
+ 
+.ui.progress.warning .bar { background-color: #33a3dc !important;
+}
+ 
+.ui.progress.error .bar { background-color: #543044 !important;
+}
+ 
+.ui.progress.offline .bar { background-color: #000 !important;
+}
+ 
+/* 上传下载 */ .status.cards .outline.icon { margin-right: 1px !important;
+}
+ 
+i.arrow.alternate.circle.down.outline.icon { color: #21ba45 !important;
+}
+ 
+i.arrow.alternate.circle.up.outline.icon { color: red !important;
+}
+ 
+/* 弹出卡片小箭头 */ .ui.right.center.popup { margin: -3px 0 0 0.914286em !important; -webkit-transform-origin: 
+    left 50% !important; transform-origin: left 50% !important;
+}
+ 
+.ui.bottom.left.popup { margin-left: 1px !important; margin-top: 3px !important;
+}
+ 
+.ui.top.left.popup { margin-left: 0 !important; margin-bottom: 10px !important;
+}
+ 
+.ui.top.right.popup { margin-right: 0 !important; margin-bottom: 8px !important;
+}
+ 
+.ui.left.center.popup { margin: -3px .91428571em 0 0 !important; -webkit-transform-origin: right 50% !important; 
+    transform-origin: right 50% !important;
+}
+ 
+.ui.right.center.popup:before, .ui.left.center.popup:before { border: 0px solid #fafafaeb !important; background: 
+    #fafafaeb !important;
+}
+ 
+.ui.top.popup:before { border-color: #fafafaeb transparent transparent !important;
+}
+ 
+.ui.popup:before { border-color: #fafafaeb transparent transparent !important;
+}
+ 
+.ui.bottom.left.popup:before { border-radius: 0 !important; border: 1px solid transparent !important; border-color: 
+    #fafafaeb transparent transparent !important;
+    background: #fafafaeb !important; -webkit-box-shadow: 0px 0px 0 0 #fafafaeb !important; box-shadow: 0px 0px 0 0 
+    #fafafaeb !important;
+    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+}
+ 
+.ui.bottom.right.popup:before { border-radius: 0 !important; border: 1px solid transparent !important; 
+    border-color: #fafafaeb transparent transparent !important; background: #fafafaeb !important; 
+    -webkit-box-shadow: 0px 0px 0 0 #fafafaeb !important; box-shadow: 0px 0px 0 0 #fafafaeb !important; 
+    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+}
+ 
+.ui.top.left.popup:before { border-radius: 0 !important; border: 1px solid transparent !important; border-color: 
+    #fafafaeb transparent transparent !important;
+    background: #fafafaeb !important; -webkit-box-shadow: 0px 0px 0 0 #fafafaeb !important; box-shadow: 0px 0px 0 0 
+    #fafafaeb !important;
+    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+}
+ 
+.ui.top.right.popup:before { border-radius: 0 !important; border: 1px solid transparent !important; border-color: 
+    #fafafaeb transparent transparent !important;
+    background: #fafafaeb !important; -webkit-box-shadow: 0px 0px 0 0 #fafafaeb !important; box-shadow: 0px 0px 0 0 
+    #fafafaeb !important;
+    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+}
+ 
+.ui.left.center.popup:before { border-radius: 0 !important; border: 1px solid transparent !important; border-color: 
+    #fafafaeb transparent transparent !important;
+    background: #fafafaeb !important; -webkit-box-shadow: 0px 0px 0 0 #fafafaeb !important; box-shadow: 0px 0px 0 0 
+    #fafafaeb !important;
+    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+}
+ 
+/* 弹出卡片 */ .status.cards .ui.content.popup { min-width: 20rem !important; line-height: 2rem !important; 
+    border-radius: 5px !important; border: 1px solid transparent !important; background-color: #fafafaeb 
+    !important;
+    font-family: Arial,Helvetica,sans-serif !important;
+}
+ 
+.ui.content { margin: 0 !important; padding: 1em !important;
+}
+ 
+/* 服务页 */ .ui.table { background: RGB(225,225,225,0.6) !important;
+}
+ 
+.ui.table thead th { background: transparent !important;
+}
+ 
+/* 服务页进度条 */ .service-status .good { background-color: #21ba45 !important;
+}
+ 
+.service-status .danger { background-color: red !important;
+}
+ 
+.service-status .warning { background-color: orange !important;
+}
+ 
+/*鼠标*/ body { cursor: url(https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/a.cur), default;
+}
+ 
+/* 版权 */ .ui.inverted.segment, .ui.primary.inverted.segment { color: #000 !important; font-weight: bold 
+    !important;
+    background-color: #fafafaa3 !important;
+}
+</style>
+ 
+<!--Logo和版权--> <!-- 将代码2中的部分代码稍作调整，确保它在页面加载完成后执行 --> <script>
+// 定义函数，用于设置页面标题、页脚文本和 logo
+function setPageProperties() { var avatar = document.querySelector(".item img"); var footer = 
+    document.querySelector("div.is-size-7"); footer.innerHTML = "星穹列车"; footer.style.visibility = "visible"; 
+    avatar.src = "https://pixiv.navirank.com/jpg/980/98061275.jpg"; avatar.style.visibility = "visible";
+    
+    // 设置 favicon
+    var faviconurl = "https://pixiv.navirank.com/jpg/980/98061275.jpg"; var link = 
+    document.querySelector("link[rel*='icon']") || document.createElement('link'); link.type = 'image/x-icon'; 
+    link.rel = 'shortcut icon'; link.href = faviconurl; document.getElementsByTagName('head')[0].appendChild(link);
+}
+// 在页面加载完成后执行设置页面属性的函数
+document.addEventListener('DOMContentLoaded', function() { setPageProperties();
+});
+</script>
+ 
+<!-- 网页特效 - 樱花 --> <script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/yinghua.js"></script>
+ 
+<!-- 网页鼠标点击特效 - 爱心 --> <script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/aixin.js"></script>
+ 
+<!-- 网页鼠标点击特效 - 烟花波纹 --> <script 
+src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/yanhuabowen.js"></script>
+ 
+<!-- 鼠标特效 - 小星星拖尾 --> <span class="js-cursor-container"></span> <script 
+src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/xiaoxingxing.js"></script> <script 
+src="https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script> <!-- BGM --> <style>
+  /* 控制器样式 */
+  #music-controls {
+    position: fixed; bottom: 55px; /* 上移 20px */ left: 50%; transform: translateX(-50%); background-color: 
+    rgba(255, 255, 255, 0.8); padding: 10px 20px; border-radius: 20px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); 
+    display: flex; justify-content: space-between; align-items: center; z-index: 2; /* 确保控制器在最上层 */ width: 
+    500px; /* 增加控制器宽度 */
+  }
+  .control-button { border: none; background-color: transparent; cursor: pointer; font-size: 20px; margin: 0 5px; 
+    padding: 5px; border-radius: 50%; transition: background-color 0.3s ease; position: relative;
+  }
+  .control-button:hover { background-color: #f0f0f0;
+  }
+  /* 进度条和时间样式 */
+  #progress-bar {
+    width: calc(100% - 200px); /* 增加进度条宽度 */ height: 6px; /* 增加高度 */ background-color: rgb(211,239,242); 
+    border-radius: 6px; /* 增加圆角 */ position: relative; z-index: 1; /* 将进度条放在控制按钮下方 */
+  }
+  #progress {
+    height: 100%; background-color: rgb(68,210,231); border-radius: 6px; /* 增加圆角 */
+  }
+  .progress-percentage { position: absolute; top: -35px; /* 上移 35 像素 */ left: 50%; transform: translateX(-50%); 
+    background-color: rgba(0, 0, 0, 0.8); color: #fff; padding: 5px; border-radius: 5px; display: none;
+  }
+  #progress-bar:hover .progress-percentage {
+    display: block;
+  }
+  .time-display { margin-left: 10px; margin-right: 10px; /* 调整右边距 */ font-size: 14px; color: #333; 
+    white-space: nowrap; /* 避免换行 */
+  }
+  /* 音量条样式 */
+  #volume-bar {
+    width: 150px; /* 增加音量条宽度 */ height: 6px; background-color: rgb(249, 233, 234); border-radius: 6px; 
+    position: relative; z-index: 1; /* 确保音量条在进度条下方 */
+  }
+  #volume-bar .volume-level {
+    height: 100%; background-color: rgb(255, 105, 153); border-radius: 6px; position: absolute; left: 0; top: 0; 
+    width: 3%; /* 初始音量 */
+  }
+  .volume-percentage { position: absolute; top: -35px; /* 上移 35 像素 */ left: 50%; transform: translateX(-50%); 
+    background-color: rgba(0, 0, 0, 0.8); color: #fff; padding: 5px; border-radius: 5px; display: none;
+  }
+  #volume-bar:hover .volume-percentage {
+    display: block;
+  }
+  .volume-knob, .progress-knob { width: 10px; /* 缩小50% */ height: 10px; /* 缩小50% */ background-color: #fff; 
+    border-radius: 50%; position: absolute; top: -2px; /* 调整位置使其在条的中心 */ transform: translateX(-50%); 
+    cursor: pointer; z-index: 2; box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2); /* 添加阴影以美化 */
+  }
+/* 为进度条小白球添加描边 */ .progress-knob { border: 2px solid rgb(68,210,231); /* 进度条颜色 */
+}
+/* 为音量条小白球添加描边 */ .volume-knob { border: 2px solid rgb(255, 105, 153); /* 音量条颜色 */
+}
+</style> <!-- 在<head>标签中引入Font Awesome的CSS文件 --> <link rel="stylesheet" 
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- 
+在<body>标签中的music-controls div中使用Font Awesome的图标 --> <div id="music-controls">
+  <!-- 控制按钮 --> <button class="control-button stop-button" onclick="stopAudio()" data-tooltip="停止"><i 
+  class="fas fa-stop"></i></button> <button class="control-button play-pause-button" onclick="togglePlayPause()" 
+  data-tooltip="播放/暂停"><i class="fas fa-play"></i></button> <button class="control-button" 
+  onclick="playNextTrack()" data-tooltip="下一曲"><i class="fas fa-forward"></i></button> <!-- 音乐进度条 --> <div 
+  id="progress-bar">
+    <div id="progress"></div> <div class="progress-knob" id="progress-knob"></div> <div class="progress-percentage" 
+    id="progress-percentage">00:00</div>
+  </div> <div class="time-display"> <span id="current-time">00:00</span> / <span id="total-time">00:00</span> 
+  </div> <!-- 音量条 --> <div id="volume-bar">
+    <div class="volume-level"></div> <div class="volume-knob" id="volume-knob"></div> <!-- 气泡显示音量百分比 --> 
+    <div class="volume-percentage" id="volume-percentage">3%</div>
+  </div> </div> <script> const songs = [ "http://music.163.com/song/media/outer/url?id=2155423467.mp3", 
+    "http://music.163.com/song/media/outer/url?id=2155422573.mp3"
+  ]; let currentSongIndex = 0; const musicPlayer = document.createElement('audio'); musicPlayer.setAttribute('id', 
+  'musicPlayer'); musicPlayer.setAttribute('preload', 'auto'); musicPlayer.volume = 0.03; // 初始播放音量调整为 3% 
+  musicPlayer.autoplay = true; // 自动播放
+  // 从 sessionStorage 中获取保存的音乐播放进度、音量和当前歌曲索引
+  const savedProgress = sessionStorage.getItem('musicProgress'); const savedVolume = 
+  sessionStorage.getItem('musicVolume'); const savedSongIndex = sessionStorage.getItem('currentSongIndex'); const 
+  savedVolumeKnobPosition = sessionStorage.getItem('volumeKnobPosition'); if (savedProgress) {
+    musicPlayer.currentTime = parseFloat(savedProgress);
+  }
+  if (savedVolume) { musicPlayer.volume = parseFloat(savedVolume);
+  }
+  if (savedSongIndex) { currentSongIndex = parseInt(savedSongIndex);
+  }
+  // 设置当前歌曲的 src
+  musicPlayer.src = songs[currentSongIndex]; document.body.appendChild(musicPlayer); let isPlaying = true; // 
+  自动播放 function togglePlayPause() {
+    if (isPlaying) { musicPlayer.pause(); document.querySelector('.play-pause-button i').className = 'fas fa-play';
+    } else {
+      musicPlayer.play(); document.querySelector('.play-pause-button i').className = 'fas fa-pause';
+    }
+    isPlaying = !isPlaying;
+  }
+  function stopAudio() { musicPlayer.pause(); musicPlayer.currentTime = 0; 
+    document.querySelector('.play-pause-button i').className = 'fas fa-play'; isPlaying = false;
+  }
+  function playNextTrack() { currentSongIndex = (currentSongIndex + 1) % songs.length; musicPlayer.src = 
+    songs[currentSongIndex]; musicPlayer.play(); document.querySelector('.play-pause-button i').className = 'fas 
+    fa-pause'; isPlaying = true;
+    // 保存当前歌曲索引到 sessionStorage
+    sessionStorage.setItem('currentSongIndex', currentSongIndex.toString());
+  }
+  function updateTimeDisplay() { const currentTimeDisplay = document.getElementById('current-time'); const 
+    totalTimeDisplay = document.getElementById('total-time'); let currentMinutes = 
+    Math.floor(musicPlayer.currentTime / 60); let currentSeconds = Math.floor(musicPlayer.currentTime % 60); let 
+    totalMinutes = Math.floor(musicPlayer.duration / 60); let totalSeconds = Math.floor(musicPlayer.duration % 60); 
+    if (currentSeconds < 10) {
+      currentSeconds = '0' + currentSeconds;
+    }
+    if (totalSeconds < 10) { totalSeconds = '0' + totalSeconds;
+    }
+    currentTimeDisplay.textContent = currentMinutes + ':' + currentSeconds; totalTimeDisplay.textContent = 
+    totalMinutes + ':' + totalSeconds;
+  }
+  // 添加事件监听器到音乐播放器
+  musicPlayer.addEventListener('timeupdate', () => { updateTimeDisplay(); const progressBar = 
+    document.getElementById('progress'); const progressKnob = document.getElementById('progress-knob'); const 
+    percent = (musicPlayer.currentTime / musicPlayer.duration) * 100; progressBar.style.width = percent + '%'; 
+    progressKnob.style.left = percent + '%';
+    // 保存当前音乐播放进度到 sessionStorage
+    sessionStorage.setItem('musicProgress', musicPlayer.currentTime.toString());
+  });
+  // 初始化音量条位置和小白球位置
+  window.onload = function() { if (savedVolumeKnobPosition) { const volumeKnob = 
+      document.getElementById('volume-knob'); volumeKnob.style.left = savedVolumeKnobPosition;
+    }
+    updateVolumeDisplay();
+  };
+  // 更新音量显示
+  function updateVolumeDisplay() { const volumeLevel = document.querySelector('.volume-level'); const 
+    volumePercentage = document.getElementById('volume-percentage'); volumeLevel.style.width = (musicPlayer.volume 
+    * 100) + '%'; volumePercentage.innerHTML = Math.round(musicPlayer.volume * 100) + '%'; 
+    volumePercentage.style.left = (musicPlayer.volume * 100) + '%';
+  }
+  // 监听音量改变事件，保存音量到 sessionStorage
+  musicPlayer.addEventListener('volumechange', () => { sessionStorage.setItem('musicVolume', 
+    musicPlayer.volume.toString()); updateVolumeDisplay();
+  });
+  // 监听音乐播放器状态
+  musicPlayer.addEventListener('play', () => { document.querySelector('.play-pause-button i').className = 'fas 
+    fa-pause'; isPlaying = true;
+  });
+  musicPlayer.addEventListener('pause', () => { document.querySelector('.play-pause-button i').className = 'fas 
+    fa-play'; isPlaying = false;
+  });
+  musicPlayer.addEventListener('ended', () => { playNextTrack();
+  });
+  // 拖动进度小白球
+  const progressKnob = document.getElementById('progress-knob'); progressKnob.addEventListener('mousedown', 
+  startAdjustingProgress); document.addEventListener('mousemove', adjustProgress); 
+  document.addEventListener('mouseup', stopAdjustingProgress); let isAdjustingProgress = false; function 
+  startAdjustingProgress(event) {
+    isAdjustingProgress = true; adjustProgress(event);
+  }
+  function adjustProgress(event) { if (!isAdjustingProgress) return; const progressBar = 
+    document.getElementById('progress-bar'); const rect = progressBar.getBoundingClientRect(); let progress = 
+    (event.clientX - rect.left) / rect.width * 100; progress = Math.max(0, Math.min(100, progress)); 
+    musicPlayer.currentTime = progress * musicPlayer.duration / 100; const progressKnob = 
+    document.getElementById('progress-knob'); progressKnob.style.left = progress + '%';
+  }
+  function stopAdjustingProgress() { isAdjustingProgress = false;
+  }
+  // 拖动音量小白球
+  const volumeKnob = document.getElementById('volume-knob'); volumeKnob.addEventListener('mousedown', 
+  startAdjustingVolume); document.addEventListener('mousemove', adjustVolume); document.addEventListener('mouseup', 
+  stopAdjustingVolume); let isAdjustingVolume = false; function startAdjustingVolume(event) {
+    isAdjustingVolume = true; adjustVolume(event);
+  }
+  function adjustVolume(event) { if (!isAdjustingVolume) return; const volumeBar = 
+    document.getElementById('volume-bar'); const rect = volumeBar.getBoundingClientRect(); let volume = 
+    (event.clientX - rect.left) / rect.width * 100; volume = Math.max(0, Math.min(100, volume)); musicPlayer.volume 
+    = volume / 100; const volumeKnob = document.getElementById('volume-knob'); volumeKnob.style.left = volume + 
+    '%'; const volumeLevel = document.querySelector('.volume-level'); volumeLevel.style.width = volume + '%'; const 
+    volumePercentage = document.getElementById('volume-percentage'); volumePercentage.innerHTML = 
+    Math.round(volume) + '%'; volumePercentage.style.left = volume + '%';
+  }
+  function stopAdjustingVolume() { isAdjustingVolume = false;
+  }
+  // 添加进度条悬停提示
+  const progressBar = document.getElementById('progress-bar'); progressBar.addEventListener('mousemove', 
+  updateProgressTooltip); progressBar.addEventListener('mouseleave', hideProgressTooltip); function 
+  updateProgressTooltip(event) {
+    const progressPercentage = document.getElementById('progress-percentage'); const rect = 
+    progressBar.getBoundingClientRect(); let progress = (event.clientX - rect.left) / rect.width * 100; progress = 
+    Math.max(0, Math.min(100, progress)); const time = progress * musicPlayer.duration / 100; let minutes = 
+    Math.floor(time / 60); let seconds = Math.floor(time % 60); if (seconds < 10) seconds = '0' + seconds; 
+    progressPercentage.textContent = minutes + ':' + seconds; progressPercentage.style.left = (event.clientX - 
+    rect.left) + 'px'; progressPercentage.style.display = 'block';
+  }
+  function hideProgressTooltip() { const progressPercentage = document.getElementById('progress-percentage'); 
+    progressPercentage.style.display = 'none';
+  }
+  // 在页面刷新或关闭前保存音量和进度信息
+  window.addEventListener('beforeunload', () => { sessionStorage.setItem('musicVolume', 
+    musicPlayer.volume.toString()); sessionStorage.setItem('musicProgress', musicPlayer.currentTime.toString()); 
+    sessionStorage.setItem('volumeKnobPosition', document.getElementById('volume-knob').style.left);
+  });
+  // 在页面加载后恢复音量和进度信息
+  window.onload = function() { const savedVolume = sessionStorage.getItem('musicVolume'); const savedProgress = 
+    sessionStorage.getItem('musicProgress'); const savedVolumeKnobPosition = 
+    sessionStorage.getItem('volumeKnobPosition');
+    
+    if (savedVolume !== null) { musicPlayer.volume = parseFloat(savedVolume); updateVolumeDisplay();
+    }
+    if (savedProgress !== null) { musicPlayer.currentTime = parseFloat(savedProgress);
+    }
+    if (savedVolumeKnobPosition !== null) { const volumeKnob = document.getElementById('volume-knob'); 
+      volumeKnob.style.left = savedVolumeKnobPosition;
+    }
+  };
+</script>
+ 
+<style> .menu-container { display: flex; overflow-x: auto; max-width: 100%;
+    }
+    .menu-item { padding: 20px; white-space: nowrap; font-weight: bold; color: black; transition: background-color 
+        0.3s ease;
+    }
+</style> <div class="ui large top fixed menu nb-menu"> <div class="ui container"> <a class="item" href="/"> <img 
+            src="/static/logo.svg?v20210804">
+        </a> <div class="menu-container">
+            
+            <a class='menu-item active' href="/"><i class="home icon"></i>首页</a> <a class='menu-item' 
+            href="/service"><i class="rss icon"></i>服务</a> <a class='menu-item' href="/network"><i class="server 
+            icon"></i>网络</a>
+            
+        </div> <div class="right menu"> <div class="item">
+                
+                <a href="/login" class="ui large positive mochen-primary-btn button"><i class="sign-in 
+                icon"></i>登录</a>
+                
+            </div> </div> </div> </div> <div class="ui mini confirm modal transition hidden"> <div 
+    class="header"></div> <div class="content"> </div> <div class="actions">
+        <div class="ui negative button">取消</div> <button class="ui positive nezha-primary-btn right labeled icon 
+        button">确认<i class="checkmark icon"></i> </button>
+    </div> </div> <div class="nb-container"> <div class="ui container"> <div id="app"> <div class="ui styled fluid 
+      accordion" v-for="group in groups">
+        <div class="active title"> <i class="dropdown icon"></i> @#(group.Tag!==''?group.Tag:'默认')#@ </div> <div 
+        class="active content">
+          <div class="ui four stackable status cards"> <div v-for="server in group.data" :id="server.ID" class="ui 
+            card">
+              <div class="content" v-if="server.Host" style="margin-top: 10px; padding-bottom: 5px"> <div 
+                class="header">
+                  <img class="svg" v-if="server.Host.CountryCode" style="border-radius: 15px;width: 30px;" 
+                  :src="'https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-y/flag-icon-css/4.1.5/flags/1x1/'+server.Host.CountryCode 
+                  + '.svg'" alt="国家"/>&nbsp;<i v-if='server.Host.Platform == "darwin"' class="apple icon"></i><i 
+                    v-else-if='isWindowsPlatform(server.Host.Platform)' class="windows icon"></i><i v-else 
+                    :class="'fl-' + getFontLogoClass(server.Host.Platform)"></i>
+                  <span class="server-name">@#server.Name + (server.live?'':'[已离线]')#@</span> <i 
+                  class="nezha-secondary-font info circle icon" style="height: 28px"></i> <div class="ui content 
+                  popup" style="margin-bottom: 0">
+                    系统: @#server.Host.Platform#@-@#server.Host.PlatformVersion#@ [<span 
+                      v-if="server.Host.Virtualization">@#server.Host.Virtualization#@:</span>@#server.Host.Arch#@]<br 
+                      />
+                    CPU: @#server.Host.CPU#@<br /> 硬盘: 
+                    @#formatByteSize(server.State.DiskUsed)#@/@#formatByteSize(server.Host.DiskTotal)#@<br /> 内存: 
+                    @#formatByteSize(server.State.MemUsed)#@/@#formatByteSize(server.Host.MemTotal)#@<br /> 交换: 
+                    @#formatByteSize(server.State.SwapUsed)#@/@#formatByteSize(server.Host.SwapTotal)#@<br /> 流量: 
+                    <i
+                      class="arrow alternate circle down outline 
+                      icon"></i>@#formatByteSize(server.State.NetInTransfer)#@<i class="arrow alternate circle up 
+                      outline icon"></i>@#formatByteSize(server.State.NetOutTransfer)#@<br />
+                    负载: @# toFixed2(server.State.Load1) #@/@# toFixed2(server.State.Load5) #@/@# 
+                    toFixed2(server.State.Load15) #@<br /> 进程数: @# server.State.ProcessCount #@<br /> 连接数: 
+                    TCP @# server.State.TcpConnCount #@ / UDP @# server.State.UdpConnCount #@<br /> 启动: @# 
+                    formatTimestamp(server.Host.BootTime) #@<br /> 活动: @# new 
+                    Date(server.LastActive).toLocaleString() #@<br /> 版本: @#server.Host.Version#@<br />
+                  </div> <div class="ui divider" style="margin-bottom: 5px"></div> </div> <div class="description"> 
+                  <div class="ui grid">
+                    <div class="three wide column">CPU</div> <div class="thirteen wide column"> <div 
+                      :class="formatPercent(server.live,server.State.CPU, 100).class">
+                        <div class="bar" :style="formatPercent(server.live,server.State.CPU, 100).style"> 
+                          <small>@#formatPercent(server.live,server.State.CPU,100).percent#@%</small>
+                        </div> </div> </div> <div class="three wide column">详情</div> <div class="thirteen wide 
+                    column">
+                      <i class="bi bi-cpu-fill" style="font-size: 1.1rem; color: #4a86e8"></i> 
+                      @#getCPUModel(server.Host.CPU)#@<br />
+                    </div> <div class="three wide column">内存</div> <div class="thirteen wide column"> <div 
+                      :class="formatPercent(server.live,server.State.MemUsed, server.Host.MemTotal).class">
+                        <div class="bar"
+                          :style="formatPercent(server.live,server.State.MemUsed, server.Host.MemTotal).style">
+                          <small>@#parseInt(server.State?server.State.MemUsed/server.Host.MemTotal*100:0)#@%</small> 
+                        </div>
+                      </div> </div> <div class="three wide column">详情</div> <div class="thirteen wide column"> <i 
+                      class="bi bi-memory" style="font-size: 1.1rem; color: #4a86e8"></i> 
+                      @#getKBytes(server.State.MemUsed)#@ / @#getKBytes(server.Host.MemTotal)#@<br />
+                    </div> <div class="three wide column">交换</div> <div class="thirteen wide column"> <div 
+                      :class="formatPercent(server.live,server.State.SwapUsed, server.Host.SwapTotal).class">
+                        <div class="bar"
+                          :style="formatPercent(server.live,server.State.SwapUsed, server.Host.SwapTotal).style">
+                          <small>@#parseInt(server.State?server.State.SwapUsed/server.Host.SwapTotal*100:0)#@%</small> 
+                        </div>
+                      </div> </div> <div class="three wide column">详情</div> <div v-if="server.Host.SwapTotal != 
+                    0" class="thirteen wide column">
+                      <i class="bi bi-memory" style="font-size: 1.1rem; color: #f73630"></i> 
+                      @#getKBytes(server.State.SwapUsed)#@ / @#getKBytes(server.Host.SwapTotal)#@<br />
+                    </div> <div v-else class="thirteen wide column"> 未开启SWAP<br /> </div> <div class="three wide 
+                    column">硬盘</div> <div class="thirteen wide column">
+                      <div :class="formatPercent(server.live,server.State.DiskUsed, server.Host.DiskTotal).class"> 
+                        <div class="bar"
+                          :style="formatPercent(server.live,server.State.DiskUsed, server.Host.DiskTotal).style">
+                          <small>@#parseInt(server.State?server.State.DiskUsed/server.Host.DiskTotal*100:0)#@%</small> 
+                        </div>
+                      </div> </div> <div class="three wide column">详情</div> <div class="thirteen wide column"> <i 
+                      class="bi bi-hdd-rack-fill" style="font-size: 1.1rem; color: #4a86e8"></i> 
+                      @#getKBytes(server.State.DiskUsed)#@ / @#getKBytes(server.Host.DiskTotal)#@<br />
+                    </div> <div class="three wide column">网络</div> <div class="thirteen wide column"> <i 
+                      class="arrow alternate circle down outline icon"></i> 
+                      @#formatByteSize(server.State.NetInSpeed)#@/s <i class="arrow alternate circle up outline 
+                      icon"></i> @#formatByteSize(server.State.NetOutSpeed)#@/s
+                    </div> <div class="three wide column">流量</div> <div class="thirteen wide column"> <i 
+                      class="arrow circle down icon"></i> @#formatByteSize(server.State.NetInTransfer)#@ &nbsp; <i 
+                      class="arrow circle up icon"></i> @#formatByteSize(server.State.NetOutTransfer)#@
+                    </div>
+                    
+                    <div class="three wide column">连接</div> <div class="thirteen wide column"> <i 
+                      class="bi-hdd-network" style="font-size: 1.1rem; color: #b1a006"></i> TCP @# 
+                      server.State.TcpConnCount #@ / UDP @# server.State.UdpConnCount #@<br />
+                    </div> <div class="three wide column">信息</div> <div class="thirteen wide column"> <i 
+                      class="bi bi-cpu-fill" style="font-size: 1.1rem; color: #4a86e8;"></i> 
+                      @#getCoreAndGHz(server.Host.CPU)#@ &nbsp; <i class="bi bi-memory" style="font-size: 1.1rem; 
+                      color: #00ac0d;"></i> @#getKBytes(server.Host.MemTotal)#@ &nbsp; <i class="bi 
+                      bi-hdd-rack-fill" style="font-size: 1.1rem; color: #980000"></i> 
+                      @#getKBytes(server.Host.DiskTotal)#@
+                    </div> <div class="three wide column">在线</div> <div class="thirteen wide column"> <i 
+                      class="clock icon"></i>@#secondToDate(server.State.Uptime)#@
+                    </div> </div> </div> </div> <div class="content" v-else> <p>@#server.Name#@</p> 
+                <p>服务器已离线</p>
+              </div> </div> </div> </div> </div> </div> </div> </div> <div class="ui inverted vertical footer 
+segment">
+    <div class="ui center aligned is-size-7 container"> <b>&copy; <a style="color: white;" 
+        href="/">星穹列车</a></b> | <small>Powered by <a
+                href="https://github.com/naiba/nezha" style="color: white;" target="_blank">哪吒监控</a> 
+            v0.16.27</small>
+    </div> </div> <script 
+src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-y/jquery/3.6.0/jquery.min.js"></script> <script 
+src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-y/semantic-ui/2.4.1/semantic.min.js"></script> <script 
+src="/static/semantic-ui-alerts.min.js"></script> <script 
+src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-y/vue/2.6.14/vue.min.js"></script> <script 
+src="/static/main.js?v20240213"></script> <script>
+    (function () { 
+        updateLang({"Add":"新增","AlarmRule":"告警规则","Cron":"计划任务","Edit":"修改","Monitor":"服务监控","Notification":"通知方式","Server":"服务器"});
+    })();
+</script> </body> </html> <script> const initData = 
+  JSON.parse('{\u0022now\u0022:1730639116000,\u0022servers\u0022:[{\u0022ID\u0022:7,\u0022CreatedAt\u0022:\u00222024-06-05T00:18:01.710698978\u002b08:00\u0022,\u0022UpdatedAt\u0022:\u00222024-06-05T00:18:01.710698978\u002b08:00\u0022,\u0022DeletedAt\u0022:null,\u0022Name\u0022:\u0022Vmiss-东京IIJ\u0022,\u0022Tag\u0022:\u0022\u0022,\u0022DisplayIndex\u0022:6,\u0022HideForGuest\u0022:false,\u0022EnableDDNS\u0022:false,\u0022EnableIPv4\u0022:false,\u0022EnableIpv6\u0022:false,\u0022DDNSDomain\u0022:\u0022\u0022,\u0022DDNSProfile\u0022:\u0022\u0022,\u0022Host\u0022:{\u0022Platform\u0022:\u0022ubuntu\u0022,\u0022PlatformVersion\u0022:\u002220.04\u0022,\u0022CPU\u0022:[\u0022Intel 
+  Core Processor (Broadwell, IBRS) 1 Virtual 
+  Core\u0022],\u0022MemTotal\u0022:1011683328,\u0022DiskTotal\u0022:10485227520,\u0022SwapTotal\u0022:0,\u0022Arch\u0022:\u0022x86_64\u0022,\u0022Virtualization\u0022:\u0022kvm\u0022,\u0022BootTime\u0022:1717522243,\u0022CountryCode\u0022:\u0022\u0022,\u0022Version\u0022:\u00220.18.6\u0022},\u0022State\u0022:{\u0022CPU\u0022:0,\u0022MemUsed\u0022:262258688,\u0022SwapUsed\u0022:0,\u0022DiskUsed\u0022:2048090112,\u0022NetInTransfer\u0022:154207953759,\u0022NetOutTransfer\u0022:161650686650,\u0022NetInSpeed\u0022:515,\u0022NetOutSpeed\u0022:469,\u0022Uptime\u0022:13116884,\u0022Load1\u0022:0,\u0022Load5\u0022:0,\u0022Load15\u0022:0,\u0022TcpConnCount\u0022:8,\u0022UdpConnCount\u0022:1,\u0022ProcessCount\u0022:71,\u0022Temperatures\u0022:null},\u0022LastActive\u0022:\u00222024-11-03T21:05:16.64912912\u002b08:00\u0022},{\u0022ID\u0022:1,\u0022CreatedAt\u0022:\u00222024-06-02T00:41:19.60587085\u002b08:00\u0022,\u0022UpdatedAt\u0022:\u00222024-06-02T00:41:19.60587085\u002b08:00\u0022,\u0022DeletedAt\u0022:null,\u0022Name\u0022:\u0022韩国首尔春川-甲骨文\u0022,\u0022Tag\u0022:\u0022\u0022,\u0022DisplayIndex\u0022:1,\u0022HideForGuest\u0022:false,\u0022EnableDDNS\u0022:false,\u0022EnableIPv4\u0022:false,\u0022EnableIpv6\u0022:false,\u0022DDNSDomain\u0022:\u0022\u0022,\u0022DDNSProfile\u0022:\u0022\u0022,\u0022Host\u0022:{\u0022Platform\u0022:\u0022debian\u0022,\u0022PlatformVersion\u0022:\u002212.5\u0022,\u0022CPU\u0022:[\u0022Neoverse-N1 
+  2 Virtual 
+  Core\u0022],\u0022MemTotal\u0022:12535316480,\u0022DiskTotal\u0022:48371609600,\u0022SwapTotal\u0022:0,\u0022Arch\u0022:\u0022aarch64\u0022,\u0022Virtualization\u0022:\u0022\u0022,\u0022BootTime\u0022:1727700221,\u0022CountryCode\u0022:\u0022\u0022,\u0022Version\u0022:\u00220.18.6\u0022},\u0022State\u0022:{\u0022CPU\u0022:0.4999999890569598,\u0022MemUsed\u0022:623505408,\u0022SwapUsed\u0022:0,\u0022DiskUsed\u0022:3071512576,\u0022NetInTransfer\u0022:16032253162,\u0022NetOutTransfer\u0022:11612125894,\u0022NetInSpeed\u0022:4093,\u0022NetOutSpeed\u0022:2820,\u0022Uptime\u0022:2938895,\u0022Load1\u0022:0.05,\u0022Load5\u0022:0.01,\u0022Load15\u0022:0,\u0022TcpConnCount\u0022:15,\u0022UdpConnCount\u0022:3,\u0022ProcessCount\u0022:145,\u0022Temperatures\u0022:null},\u0022LastActive\u0022:\u00222024-11-03T21:05:16.41790368\u002b08:00\u0022},{\u0022ID\u0022:12,\u0022CreatedAt\u0022:\u00222024-07-16T03:52:49.22168572\u002b08:00\u0022,\u0022UpdatedAt\u0022:\u00222024-07-16T03:52:49.22168572\u002b08:00\u0022,\u0022DeletedAt\u0022:null,\u0022Name\u0022:\u0022Vmiss-香港国际\u0022,\u0022Tag\u0022:\u0022\u0022,\u0022DisplayIndex\u0022:0,\u0022HideForGuest\u0022:false,\u0022EnableDDNS\u0022:false,\u0022EnableIPv4\u0022:false,\u0022EnableIpv6\u0022:false,\u0022DDNSDomain\u0022:\u0022\u0022,\u0022DDNSProfile\u0022:\u0022\u0022,\u0022Host\u0022:{\u0022Platform\u0022:\u0022ubuntu\u0022,\u0022PlatformVersion\u0022:\u002220.04\u0022,\u0022CPU\u0022:[\u0022Intel 
+  Core Processor (Broadwell, IBRS) 1 Virtual 
+  Core\u0022],\u0022MemTotal\u0022:1011683328,\u0022DiskTotal\u0022:10485227520,\u0022SwapTotal\u0022:0,\u0022Arch\u0022:\u0022x86_64\u0022,\u0022Virtualization\u0022:\u0022kvm\u0022,\u0022BootTime\u0022:1721065645,\u0022CountryCode\u0022:\u0022\u0022,\u0022Version\u0022:\u00220.18.6\u0022},\u0022State\u0022:{\u0022CPU\u0022:0,\u0022MemUsed\u0022:271155200,\u0022SwapUsed\u0022:0,\u0022DiskUsed\u0022:2025820160,\u0022NetInTransfer\u0022:201454948529,\u0022NetOutTransfer\u0022:186751991995,\u0022NetInSpeed\u0022:583,\u0022NetOutSpeed\u0022:493,\u0022Uptime\u0022:9573482,\u0022Load1\u0022:0.04,\u0022Load5\u0022:0.01,\u0022Load15\u0022:0,\u0022TcpConnCount\u0022:8,\u0022UdpConnCount\u0022:1,\u0022ProcessCount\u0022:72,\u0022Temperatures\u0022:null},\u0022LastActive\u0022:\u00222024-11-03T21:05:16.68569672\u002b08:00\u0022},{\u0022ID\u0022:17,\u0022CreatedAt\u0022:\u00222024-09-11T21:11:43.32504172\u002b08:00\u0022,\u0022UpdatedAt\u0022:\u00222024-09-11T21:11:43.32504172\u002b08:00\u0022,\u0022DeletedAt\u0022:null,\u0022Name\u0022:\u0022AWS-SG\u0022,\u0022Tag\u0022:\u0022\u0022,\u0022DisplayIndex\u0022:0,\u0022HideForGuest\u0022:false,\u0022EnableDDNS\u0022:false,\u0022EnableIPv4\u0022:false,\u0022EnableIpv6\u0022:false,\u0022DDNSDomain\u0022:\u0022\u0022,\u0022DDNSProfile\u0022:\u0022\u0022,\u0022Host\u0022:{\u0022Platform\u0022:\u0022debian\u0022,\u0022PlatformVersion\u0022:\u002212.7\u0022,\u0022CPU\u0022:[\u0022Intel(R) 
+  Xeon(R) Platinum 8259CL CPU @ 2.50GHz 2 Physical 
+  Core\u0022],\u0022MemTotal\u0022:991002624,\u0022DiskTotal\u0022:42027126784,\u0022SwapTotal\u0022:0,\u0022Arch\u0022:\u0022x86_64\u0022,\u0022Virtualization\u0022:\u0022\u0022,\u0022BootTime\u0022:1726148302,\u0022CountryCode\u0022:\u0022\u0022,\u0022Version\u0022:\u00220.20.3\u0022},\u0022State\u0022:{\u0022CPU\u0022:0.462962952582996,\u0022MemUsed\u0022:416362496,\u0022SwapUsed\u0022:0,\u0022DiskUsed\u0022:1824657408,\u0022NetInTransfer\u0022:355965678881,\u0022NetOutTransfer\u0022:357826368570,\u0022NetInSpeed\u0022:143,\u0022NetOutSpeed\u0022:257,\u0022Uptime\u0022:4490825,\u0022Load1\u0022:0,\u0022Load5\u0022:0,\u0022Load15\u0022:0,\u0022TcpConnCount\u0022:24,\u0022UdpConnCount\u0022:6,\u0022ProcessCount\u0022:71,\u0022Temperatures\u0022:null},\u0022LastActive\u0022:\u00222024-11-03T21:05:16.5542592\u002b08:00\u0022},{\u0022ID\u0022:19,\u0022CreatedAt\u0022:\u00222024-09-19T02:34:32.74705208\u002b08:00\u0022,\u0022UpdatedAt\u0022:\u00222024-09-19T02:34:32.74705208\u002b08:00\u0022,\u0022DeletedAt\u0022:null,\u0022Name\u0022:\u0022HINET\u0022,\u0022Tag\u0022:\u0022\u0022,\u0022DisplayIndex\u0022:0,\u0022HideForGuest\u0022:false,\u0022EnableDDNS\u0022:false,\u0022EnableIPv4\u0022:false,\u0022EnableIpv6\u0022:false,\u0022DDNSDomain\u0022:\u0022\u0022,\u0022DDNSProfile\u0022:\u0022\u0022,\u0022Host\u0022:{\u0022Platform\u0022:\u0022debian\u0022,\u0022PlatformVersion\u0022:\u002212.7\u0022,\u0022CPU\u0022:[\u0022Intel 
+  Core Processor (Haswell, no TSX, IBRS) 1 Virtual 
+  Core\u0022],\u0022MemTotal\u0022:970817536,\u0022DiskTotal\u0022:10540265472,\u0022SwapTotal\u0022:0,\u0022Arch\u0022:\u0022x86_64\u0022,\u0022Virtualization\u0022:\u0022kvm\u0022,\u0022BootTime\u0022:1730600301,\u0022CountryCode\u0022:\u0022\u0022,\u0022Version\u0022:\u00220.20.3\u0022},\u0022State\u0022:{\u0022CPU\u0022:0,\u0022MemUsed\u0022:353599488,\u0022SwapUsed\u0022:0,\u0022DiskUsed\u0022:2760523776,\u0022NetInTransfer\u0022:111964821,\u0022NetOutTransfer\u0022:87955888,\u0022NetInSpeed\u0022:677,\u0022NetOutSpeed\u0022:462,\u0022Uptime\u0022:38824,\u0022Load1\u0022:0,\u0022Load5\u0022:0,\u0022Load15\u0022:0,\u0022TcpConnCount\u0022:4,\u0022UdpConnCount\u0022:0,\u0022ProcessCount\u0022:86,\u0022Temperatures\u0022:null},\u0022LastActive\u0022:\u00222024-11-03T21:05:15.84467968\u002b08:00\u0022},{\u0022ID\u0022:20,\u0022CreatedAt\u0022:\u00222024-09-29T17:26:35.55093072\u002b08:00\u0022,\u0022UpdatedAt\u0022:\u00222024-09-29T17:26:35.55093072\u002b08:00\u0022,\u0022DeletedAt\u0022:null,\u0022Name\u0022:\u0022clawcloud-HK\u0022,\u0022Tag\u0022:\u0022\u0022,\u0022DisplayIndex\u0022:0,\u0022HideForGuest\u0022:false,\u0022EnableDDNS\u0022:false,\u0022EnableIPv4\u0022:false,\u0022EnableIpv6\u0022:false,\u0022DDNSDomain\u0022:\u0022\u0022,\u0022DDNSProfile\u0022:\u0022\u0022,\u0022Host\u0022:{\u0022Platform\u0022:\u0022debian\u0022,\u0022PlatformVersion\u0022:\u002212.7\u0022,\u0022CPU\u0022:[\u0022Intel(R) 
+  Xeon(R) Platinum 2 Virtual 
+  Core\u0022],\u0022MemTotal\u0022:1990574080,\u0022DiskTotal\u0022:42098429952,\u0022SwapTotal\u0022:0,\u0022Arch\u0022:\u0022x86_64\u0022,\u0022Virtualization\u0022:\u0022\u0022,\u0022BootTime\u0022:1727597206,\u0022CountryCode\u0022:\u0022\u0022,\u0022Version\u0022:\u00220.20.3\u0022},\u0022State\u0022:{\u0022CPU\u0022:0.9345794185092796,\u0022MemUsed\u0022:444620800,\u0022SwapUsed\u0022:0,\u0022DiskUsed\u0022:1430327296,\u0022NetInTransfer\u0022:376756517639,\u0022NetOutTransfer\u0022:357383732730,\u0022NetInSpeed\u0022:9240,\u0022NetOutSpeed\u0022:8588,\u0022Uptime\u0022:3041920,\u0022Load1\u0022:0,\u0022Load5\u0022:0,\u0022Load15\u0022:0,\u0022TcpConnCount\u0022:28,\u0022UdpConnCount\u0022:5,\u0022ProcessCount\u0022:80,\u0022Temperatures\u0022:null},\u0022LastActive\u0022:\u00222024-11-03T21:05:16.022231\u002b08:00\u0022},{\u0022ID\u0022:22,\u0022CreatedAt\u0022:\u00222024-11-01T00:10:52.22378456\u002b08:00\u0022,\u0022UpdatedAt\u0022:\u00222024-11-01T00:10:52.22378456\u002b08:00\u0022,\u0022DeletedAt\u0022:null,\u0022Name\u0022:\u0022US-LA\u0022,\u0022Tag\u0022:\u0022\u0022,\u0022DisplayIndex\u0022:0,\u0022HideForGuest\u0022:false,\u0022EnableDDNS\u0022:false,\u0022EnableIPv4\u0022:false,\u0022EnableIpv6\u0022:false,\u0022DDNSDomain\u0022:\u0022\u0022,\u0022DDNSProfile\u0022:\u0022\u0022,\u0022Host\u0022:{\u0022Platform\u0022:\u0022debian\u0022,\u0022PlatformVersion\u0022:\u002212.1\u0022,\u0022CPU\u0022:[\u0022AMD 
+  EPYC 7K62 48-Core Processor 1 Virtual 
+  Core\u0022],\u0022MemTotal\u0022:1007800320,\u0022DiskTotal\u0022:19913998336,\u0022SwapTotal\u0022:1027600384,\u0022Arch\u0022:\u0022x86_64\u0022,\u0022Virtualization\u0022:\u0022\u0022,\u0022BootTime\u0022:1730388072,\u0022CountryCode\u0022:\u0022\u0022,\u0022Version\u0022:\u00220.20.3\u0022},\u0022State\u0022:{\u0022CPU\u0022:0.8771929807317675,\u0022MemUsed\u0022:356651008,\u0022SwapUsed\u0022:3690496,\u0022DiskUsed\u0022:2211468288,\u0022NetInTransfer\u0022:28600903818,\u0022NetOutTransfer\u0022:26717681454,\u0022NetInSpeed\u0022:2061,\u0022NetOutSpeed\u0022:235,\u0022Uptime\u0022:251055,\u0022Load1\u0022:0,\u0022Load5\u0022:0,\u0022Load15\u0022:0,\u0022TcpConnCount\u0022:36,\u0022UdpConnCount\u0022:1,\u0022ProcessCount\u0022:73,\u0022Temperatures\u0022:null},\u0022LastActive\u0022:\u00222024-11-03T21:05:16.61782712\u002b08:00\u0022},{\u0022ID\u0022:23,\u0022CreatedAt\u0022:\u00222024-11-03T15:56:46.61311124\u002b08:00\u0022,\u0022UpdatedAt\u0022:\u00222024-11-03T15:56:46.61311124\u002b08:00\u0022,\u0022DeletedAt\u0022:null,\u0022Name\u0022:\u0022US-LA2\u0022,\u0022Tag\u0022:\u0022\u0022,\u0022DisplayIndex\u0022:0,\u0022HideForGuest\u0022:false,\u0022EnableDDNS\u0022:false,\u0022EnableIPv4\u0022:false,\u0022EnableIpv6\u0022:false,\u0022DDNSDomain\u0022:\u0022\u0022,\u0022DDNSProfile\u0022:\u0022\u0022,\u0022Host\u0022:{\u0022Platform\u0022:\u0022debian\u0022,\u0022PlatformVersion\u0022:\u002211.3\u0022,\u0022CPU\u0022:[\u0022Intel(R) 
+  Xeon(R) CPU E5-2680 v4 @ 2.40GHz 1 Virtual 
+  Core\u0022],\u0022MemTotal\u0022:1026342912,\u0022DiskTotal\u0022:28359729152,\u0022SwapTotal\u0022:0,\u0022Arch\u0022:\u0022x86_64\u0022,\u0022Virtualization\u0022:\u0022kvm\u0022,\u0022BootTime\u0022:1730620650,\u0022CountryCode\u0022:\u0022\u0022,\u0022Version\u0022:\u00220.20.3\u0022},\u0022State\u0022:{\u0022CPU\u0022:0,\u0022MemUsed\u0022:232456192,\u0022SwapUsed\u0022:0,\u0022DiskUsed\u0022:964050944,\u0022NetInTransfer\u0022:23654964,\u0022NetOutTransfer\u0022:20032930,\u0022NetInSpeed\u0022:583,\u0022NetOutSpeed\u0022:637,\u0022Uptime\u0022:18476,\u0022Load1\u0022:0,\u0022Load5\u0022:0,\u0022Load15\u0022:0,\u0022TcpConnCount\u0022:13,\u0022UdpConnCount\u0022:1,\u0022ProcessCount\u0022:63,\u0022Temperatures\u0022:null},\u0022LastActive\u0022:\u00222024-11-03T21:05:15.95607936\u002b08:00\u0022}]}').servers; 
+  var statusCards = new Vue({
+    el: '#app', delimiters: ['@#', '#@'], data: { data: initData, groups: [], cache: [],
+    },
+    created() { this.group()
+    },
+    mounted() { $('.nezha-secondary-font.info.icon').popup({ popup: '.ui.content.popup', exclusive: true,
+      });
+    },
+    methods: { toFixed2(f) { return f.toFixed(2)
+      },
+      isWindowsPlatform(str) { return str.includes('Windows')
+      },
+      getFontLogoClass(str) { if (["almalinux", "alpine", "aosc", "apple", "archlinux", "archlabs", "artix", 
+          "budgie", "centos", "coreos", "debian", "deepin", "devuan", "docker", "elementary", "fedora", "ferris", 
+          "flathub", "freebsd", "gentoo", "gnu-guix", "illumos", "kali-linux", "linuxmint", "mageia", "mandriva", 
+          "manjaro", "nixos", "openbsd", "opensuse", "pop-os", "raspberry-pi", "redhat", "rocky-linux", "sabayon", 
+          "slackware", "snappy", "solus", "tux", "ubuntu", "void", "zorin"].indexOf(str)
+          > -1) {
+            return str;
+        }
+        if (['openwrt','linux'].indexOf(str) > -1) { return 'tux';
+        }
+        if (str == 'amazon') { return 'redhat';
+        }
+        if (str == 'arch') { return 'archlinux';
+        }
+        return '';
+      },
+      group() { this.groups = groupingData(this.data, "Tag")
+      },
+      formatPercent(live, used, total) { const percent = live ? (parseInt(used / total * 100) || 0) : -1 if 
+        (!this.cache[percent]) {
+          this.cache[percent] = { class: { ui: true, progress: true,
+            },
+            style: { 'transition-duration': '300ms', 'min-width': 'unset', width: percent + '% !important',
+            },
+            percent,
+          }
+          if (percent < 0) { this.cache[percent].style['background-color'] = 'slategray' 
+            this.cache[percent].class.offline = true
+          } else if (percent < 51) {
+            this.cache[percent].style['background-color'] = '#0a94f2' this.cache[percent].class.fine = true
+          } else if (percent < 81) {
+            this.cache[percent].style['background-color'] = 'orange' this.cache[percent].class.warning = true
+          } else {
+            this.cache[percent].style['background-color'] = 'crimson' this.cache[percent].class.error = true
+          }
+        }
+        return this.cache[percent]
+      },
+      secondToDate(s) { var d = Math.floor(s / 3600 / 24); if (d > 0) { return d + " 天"
+        }
+        var h = Math.floor(s / 3600 % 24); var m = Math.floor(s / 60 % 60); var s = Math.floor(s % 60); return h + 
+        ":" + ("0" + m).slice(-2) + ":" + ("0" + s).slice(-2);
+      },
+      formatTimestamp(t) { return new Date(t * 1000).toLocaleString()
+      },
+      formatByteSize(bs) { const x = readableBytes(bs) return x != "NaN undefined" ? x : '0B'
+      },
+      getCoreAndGHz(str){ if((str || []).hasOwnProperty(0) === false){ return '';
+        }
+        str = str[0]; let GHz = str.match(/(\d|\.)+GHz/g); let Core = str.match(/(\d|\.)+ Physical/g); GHz = 
+	    GHz!==null?GHz.hasOwnProperty(0)===false?'':GHz[0]:'' Core = 
+	    Core!==null?Core.hasOwnProperty(0)===false?'?':Core[0]:'?' if(Core === '?'){
+	        let Core = str.match(/(\d|\.)+ Virtual/g); Core = 
+	        Core!==null?Core.hasOwnProperty(0)===false?'?':Core[0]:'?' return Core.replace('Virtual','Core')
+	    }
+	    return Core.replace('Physical','Core');
+      },
+      getCPUModel(str) { if (!str || !str[0]) { return '';
+        }
+        const removePatterns = 
+        /\s*\d+\s*Virtual\s*Core\s*|\s*\d+\s*Physical\s*Core\s*|\d+\s*-\s*Core\s*Processor\s*|@ \d+\.\d+GHz|cpu/gi; 
+        const modifiedStr = str[0].replace(removePatterns, ''); if (modifiedStr === str[0]) {
+          return str[0];
+        } else {
+          return modifiedStr;
+        }
+      },
+      getKBytes(bs) { if (!bs) { return '0B';
+        }
+        var i = Math.floor(Math.log(bs) / Math.log(1024)), sizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", 
+          "YB"];
+        if (i < 3) { return Math.floor(bs / Math.pow(1024, i)) + sizes[i];
+        } else {
+          return parseFloat((bs / Math.pow(1024, i)).toFixed(1)) + sizes[i];
+        }
+      },
+      listTipsMouseenter(obj,strs,tipsNum=1){ this.layerIndex = layer.tips(strs, '#'+obj,{tips: [tipsNum, 'rgb(0 0 
+          0 / 85%)'],time:0}); $('#'+obj).attr('layerIndex',this.layerIndex)
+      },
+      listTipsMouseleave(obj){ layer.close(this.layerIndex)
+      }
+    }
+  })
+  function groupingData(data, field) { let map = {}; let dest = []; data.forEach(item => { if (!map[item[field]]) { 
+        dest.push({
+          [field]: item[field], data: [item]
+        });
+        map[item[field]] = item;
+      } else {
+        dest.forEach(dItem => { if (dItem[field] == item[field]) { dItem.data.push(item);
+          }
+        });
+      }
+    })
+    return dest;
+  }
+  let canShowError = true; function connect() { const wsProtocol = window.location.protocol == "https:" ? "wss" : 
+    "ws" const ws = new WebSocket(wsProtocol + '://' + window.location.host + '/ws'); ws.onopen = function (evt) {
+      canShowError = true; $.suiAlert({ title: '实时通道已建立', description: '可以实时获取最新监控数据啦', type: 
+        'success', time: '2', position: 'top-center',
+      });
+    }
+    ws.onmessage = function (evt) { const oldServers = statusCards.servers const data = JSON.parse(evt.data) 
+      statusCards.servers = data.servers for (let i = 0; i < statusCards.servers.length; i++) {
+        const ns = statusCards.servers[i]; if (!ns.Host) ns.live = false else { const lastActive = new 
+          Date(ns.LastActive).getTime() if (data.now - lastActive > 10 * 1000) {
+            ns.live = false
+          } else {
+            ns.live = true
+          }
+        }
+      }
+      statusCards.groups = groupingData(statusCards.servers, "Tag")
+    }
+    ws.onclose = function () { if (canShowError) { canShowError = false; $.suiAlert({ title: '实时通道已断开', 
+          description: '无法实时获取最新监控数据咯', type: 'warning', time: '2', position: 'top-center',
+        });
+      }
+      setTimeout(function () { connect()
+      }, 3000);
+    }
+    ws.onerror = function () { ws.close()
+    }
+  }
+  connect(); $('.ui.accordion').accordion({ "exclusive": false }); </script>
