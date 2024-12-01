@@ -11,10 +11,10 @@ systemctl disable nezha-agent 2>/dev/null || echo "Nezha Agent service is not en
 # 删除 Nezha Agent 二进制文件
 if [ -d "/opt/nezha" ]; then
     echo "Removing Nezha Agent binary files..."
-    rm -rf /opt/nezha
+    rm -rf /opt/nezha/agent
     echo "Binary files removed."
 else
-    echo "No Nezha Agent binary files found in /opt/nezha."
+    echo "No Nezha Agent binary files found in /opt/nezha/agent."
 fi
 
 # 删除 Nezha Agent 服务文件
