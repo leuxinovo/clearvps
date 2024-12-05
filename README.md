@@ -4,5 +4,5 @@ bash <(curl -fsSL https://raw.githubusercontent.com/leuxinovo/clearvps/refs/head
 ```
 #### 清理vps磁盘
 ```
-bash <(curl -s https://raw.githubusercontent.com/leuxinovo/clear/refs/heads/main/leuql.sh)
+bash <(curl -s https://raw.githubusercontent.com/leuxinovo/clearvps/refs/heads/main/leuql.sh)
 ```
