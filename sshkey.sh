@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# 欢迎信息
+echo "=============================================="
+echo " 欢迎使用 Leu SSH 公钥一键脚本"
+echo " 本脚本将从 GitHub 获取指定用户的 SSH 公钥并配置到当前 VPS"
+echo "=============================================="
+
 # 检查是否提供了 GitHub 用户名
 if [ -z "$1" ]; then
     echo "用法: $0 <GitHub用户名>"
@@ -23,7 +29,8 @@ GITHUB_KEYS_URL="https://github.com/$GITHUB_USERNAME.keys"
 SSH_KEYS=$(curl -s "$GITHUB_KEYS_URL")
 
 if [ -z "$SSH_KEYS" ]; then
-    echo "未能获取到 GitHub 用户 $GITHUB_USERNAME 的 SSH 公钥。请检查用户名是否正确。"
+    echo "未能获取到 GitHub 用户 $GITHUB_USERNAME 的 SSH 公钥。"
+    echo "请检查用户名是否正确，或确保该用户在 GitHub 上有 SSH 公钥。"
     exit 2
 fi
 
@@ -34,4 +41,6 @@ echo "$SSH_KEYS" >> "$AUTHORIZED_KEYS"
 # 确保 authorized_keys 的权限正确
 chmod 600 "$AUTHORIZED_KEYS"
 
+echo "=============================================="
 echo "操作完成！GitHub 用户 $GITHUB_USERNAME 的 SSH 公钥已成功添加到 $AUTHORIZED_KEYS。"
+echo "=============================================="
