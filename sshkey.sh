@@ -18,7 +18,7 @@ AUTHORIZED_KEYS="$SSH_DIR/authorized_keys"
 
 # 创建 .ssh 目录（如果不存在）
 if [ ! -d "$SSH_DIR" ]; then
-    echo "创建 .ssh 目录..."
+    echo "创建 .ssh 目录"
     mkdir -p "$SSH_DIR"
     chmod 700 "$SSH_DIR"
 fi
@@ -35,12 +35,12 @@ if [ -z "$SSH_KEYS" ]; then
 fi
 
 # 将 SSH 公钥写入 authorized_keys
-echo "写入 SSH 公钥到 $AUTHORIZED_KEYS..."
+echo "写入 SSH 公钥到 $AUTHORIZED_KEYS"
 echo "$SSH_KEYS" >> "$AUTHORIZED_KEYS"
 
 # 确保 authorized_keys 的权限正确
 chmod 600 "$AUTHORIZED_KEYS"
 
 echo "=============================================="
-echo "操作完成！GitHub 用户 $GITHUB_USERNAME 的 SSH 公钥已成功添加到 $AUTHORIZED_KEYS。"
+echo "操作完成！GitHub 用户 $GITHUB_USERNAME 的 SSH 公钥已成功添加到 $AUTHORIZED_KEYS"
 echo "=============================================="
