@@ -30,30 +30,42 @@ echo ""
 # 初始化计数器
 counter=0
 
+# 定义每列的最大宽度（适应中文字符和英文字符的混合情况）
+city_width=15
+ping_width=6  # 缩小ping宽度，减少ms和:之间的距离
+
 # 遍历城市并测试延迟
 for city in "${cities[@]}"; do
     # 提取城市名称和 IP 地址
     city_name=$(echo $city | cut -d':' -f1)
     ip_address=$(echo $city | cut -d':' -f2)
     
-    # 执行 ping 命令并获取平均延迟时间
-    ping_result=$(ping -c 4 $ip_address 2>/dev/null | tail -n 1 | awk '{print $4}' | cut -d '/' -f 2)
+    # 执行 ping 命令并获取平均延迟时间，去掉小数点后的数字
+    ping_result=$(ping -c 4 $ip_address 2>/dev/null | tail -n 1 | awk '{print int($4)}' | cut -d '/' -f 2)
 
     # 如果没有成功获取延迟时间，设置为 "N/A"
     if [ -z "$ping_result" ]; then
         ping_result="N/A"
     fi
 
-    # 根据运营商设置颜色并输出结果
-    if [[ $city_name == *"联通"* ]]; then
-        echo -n -e "${GREEN}$city_name: $ping_result ms${NC} | "
-    elif [[ $city_name == *"电信"* ]]; then
-        echo -n -e "${BLUE}$city_name: $ping_result ms${NC} | "
-    elif [[ $city_name == *"移动"* ]]; then
-        echo -n -e "${YELLOW}$city_name: $ping_result ms${NC} | "
-    else
-        echo -n -e "$city_name: $ping_result ms | "
+    # 根据延迟值来调整输出格式
+    if [ "$ping_result" != "N/A" ] && [ ${#ping_result} -le 2 ]; then
+        ping_result="$ping_result "  # 给两位数的延迟后加一个空格
     fi
+
+    # 根据运营商设置颜色并格式化输出
+    if [[ $city_name == *"联通"* ]]; then
+        formatted_result=$(printf "${GREEN}%-${city_width}s: %-${ping_width}s ms${NC}" "$city_name" "$ping_result")
+    elif [[ $city_name == *"电信"* ]]; then
+        formatted_result=$(printf "${BLUE}%-${city_width}s: %-${ping_width}s ms${NC}" "$city_name" "$ping_result")
+    elif [[ $city_name == *"移动"* ]]; then
+        formatted_result=$(printf "${YELLOW}%-${city_width}s: %-${ping_width}s ms${NC}" "$city_name" "$ping_result")
+    else
+        formatted_result=$(printf "%-${city_width}s: %-${ping_width}s ms" "$city_name" "$ping_result")
+    fi
+
+    # 输出格式化结果并加上竖线
+    echo -n "$formatted_result | "
 
     # 每三个城市换行
     ((counter++))
