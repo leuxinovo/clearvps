@@ -30,14 +30,8 @@ SSH_KEYS=$(curl -s "$GITHUB_KEYS_URL")
 
 if [ -z "$SSH_KEYS" ]; then
     echo "未能获取到GitHub用户“$GITHUB_USERNAME”的SSH公钥"
-    echo "请检查用户名是否正确，或确保该用户在GitHub上有SSH公钥"
+    echo "请检查用户名是否正确 或确保该用户在GitHub上有SSH公钥"
     exit 2
-fi
-
-# 检查 SSH 公钥格式
-if ! echo "$SSH_KEYS" | grep -q "^ssh-rsa"; then
-    echo "获取的内容不是有效的SSH公钥"
-    exit 3
 fi
 
 # 检查公钥是否已经存在于 authorized_keys 中
