@@ -29,7 +29,7 @@ GITHUB_KEYS_URL="https://github.com/$GITHUB_USERNAME.keys"
 SSH_KEYS=$(curl -s "$GITHUB_KEYS_URL")
 
 if [ -z "$SSH_KEYS" ]; then
-    echo "未能获取到GitHub用户$GITHUB_USERNAME的SSH公钥"
+    echo "未能获取到GitHub用户“$GITHUB_USERNAME”的SSH公钥"
     echo "请检查用户名是否正确 或确保该用户在GitHub上有SSH公钥"
     exit 2
 fi
