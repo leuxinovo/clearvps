@@ -19,6 +19,9 @@ echo "中国地区延迟测试"
 echo "===================="
 echo ""
 
+# 初始化计数器
+counter=0
+
 # 遍历城市并测试延迟
 for city in "${cities[@]}"; do
     # 提取城市名称和 IP 地址
@@ -33,8 +36,15 @@ for city in "${cities[@]}"; do
         ping_result="N/A"
     fi
 
-    # 输出结果
-    echo "$city_name: $ping_result ms"
+    # 输出结果，每三列换行
+    echo -n "$city_name: $ping_result ms  "
+    
+    # 每三个城市换一行
+    ((counter++))
+    if [ $counter -eq 3 ]; then
+        echo ""
+        counter=0
+    fi
 done
 
 echo "===================="
