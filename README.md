@@ -10,3 +10,7 @@ bash <(curl -s https://raw.githubusercontent.com/leuxinovo/clearvps/refs/heads/m
 ```
 bash <(curl -sSL https://raw.githubusercontent.com/leuxinovo/clearvps/refs/heads/main/sshkey.sh) github用户名
 ```
+#### 各地区延迟测试脚本
+```
+bash <(curl -s https://raw.githubusercontent.com/leuxinovo/clearvps/refs/heads/main/ping.sh)
+```
