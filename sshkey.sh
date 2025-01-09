@@ -35,11 +35,17 @@ if [ -z "$SSH_KEYS" ]; then
 fi
 
 # 将 SSH 公钥写入 authorized_keys
-echo "写入SSH公钥到$AUTHORIZED_KEYS"
+echo "尝试写入SSH公钥到$AUTHORIZED_KEYS"
 echo "$SSH_KEYS" >> "$AUTHORIZED_KEYS"
 
 # 确保 authorized_keys 的权限正确
 chmod 600 "$AUTHORIZED_KEYS"
+
+# 检查写入操作是否成功
+if [ $? -ne 0 ]; then
+    echo "写入 $AUTHORIZED_KEYS 失败！请检查权限或其他问题。"
+    exit 3
+fi
 
 echo "=============================================="
 echo "操作完成！GitHub用户$GITHUB_USERNAME的SSH公钥已成功添加到$AUTHORIZED_KEYS"
