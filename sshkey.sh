@@ -28,24 +28,25 @@ echo "从 GitHub 获取 SSH 公钥..."
 GITHUB_KEYS_URL="https://github.com/$GITHUB_USERNAME.keys"
 SSH_KEYS=$(curl -s "$GITHUB_KEYS_URL")
 
+# 检查是否获取到 SSH 公钥
 if [ -z "$SSH_KEYS" ]; then
     echo "未能获取到GitHub用户$GITHUB_USERNAME的SSH公钥"
-    echo "请检查用户名是否正确 或确保该用户在GitHub上有SSH公钥"
+    echo "请检查用户名是否正确，或确认该用户是否已经将公钥上传到GitHub"
     exit 2
 fi
 
+# 如果成功获取到公钥，检查是否为有效的 SSH 公钥
+if ! echo "$SSH_KEYS" | grep -q "ssh-rsa"; then
+    echo "获取的内容不是有效的SSH公钥"
+    exit 3
+fi
+
 # 将 SSH 公钥写入 authorized_keys
-echo "尝试写入SSH公钥到$AUTHORIZED_KEYS"
+echo "写入SSH公钥到$AUTHORIZED_KEYS"
 echo "$SSH_KEYS" >> "$AUTHORIZED_KEYS"
 
 # 确保 authorized_keys 的权限正确
 chmod 600 "$AUTHORIZED_KEYS"
-
-# 检查写入操作是否成功
-if [ $? -ne 0 ]; then
-    echo "写入 $AUTHORIZED_KEYS 失败！请检查权限或其他问题。"
-    exit 3
-fi
 
 echo "=============================================="
 echo "操作完成！GitHub用户$GITHUB_USERNAME的SSH公钥已成功添加到$AUTHORIZED_KEYS"
