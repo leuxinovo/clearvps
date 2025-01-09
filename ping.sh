@@ -40,6 +40,24 @@ counter=0
 city_width=15
 ping_width=6  # 缩小ping宽度，减少ms和:之间的距离
 
+# 获取延迟结果的函数
+get_ping_result() {
+    local address=$1
+    local protocol=$2
+    local result
+
+    if [ "$protocol" == "ipv4" ]; then
+        result=$(ping -c 4 $address 2>/dev/null | tail -n 1 | awk '{print int($4)}' | cut -d '/' -f 2)
+    elif [ "$protocol" == "ipv6" ]; then
+        result=$(ping6 -c 4 $address 2>/dev/null | tail -n 1 | awk '{print int($4)}' | cut -d '/' -f 2)
+    fi
+
+    if [ -z "$result" ]; then
+        result="N/A"
+    fi
+    echo "$result"
+}
+
 # 根据用户选择执行相应的测试
 for city in "${cities[@]}"; do
     # 提取城市名称、IPv4 和 IPv6 地址
@@ -49,25 +67,11 @@ for city in "${cities[@]}"; do
 
     # 执行选择的ping命令并获取延迟时间
     if [ "$choice" == "1" ]; then
-        # 执行 IPv4 ping 命令并获取延迟时间，去掉小数点后的数字
-        ipv4_ping_result=$(ping -c 4 $ipv4_address 2>/dev/null | tail -n 1 | awk '{print int($4)}' | cut -d '/' -f 2)
-        if [ -z "$ipv4_ping_result" ]; then
-            ipv4_ping_result="N/A"
-        fi
-        if [ "$ipv4_ping_result" != "N/A" ] && [ ${#ipv4_ping_result} -le 2 ]; then
-            ipv4_ping_result="$ipv4_ping_result "  # 给两位数的延迟后加一个空格
-        fi
+        ipv4_ping_result=$(get_ping_result "$ipv4_address" "ipv4")
     fi
 
     if [ "$choice" == "2" ]; then
-        # 执行 IPv6 ping 命令并获取延迟时间，去掉小数点后的数字
-        ipv6_ping_result=$(ping6 -c 4 $ipv6_address 2>/dev/null | tail -n 1 | awk '{print int($4)}' | cut -d '/' -f 2)
-        if [ -z "$ipv6_ping_result" ]; then
-            ipv6_ping_result="N/A"
-        fi
-        if [ "$ipv6_ping_result" != "N/A" ] && [ ${#ipv6_ping_result} -le 2 ]; then
-            ipv6_ping_result="$ipv6_ping_result "  # 给两位数的延迟后加一个空格
-        fi
+        ipv6_ping_result=$(get_ping_result "$ipv6_address" "ipv6")
     fi
 
     # 根据延迟值来调整输出格式
