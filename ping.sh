@@ -9,8 +9,7 @@ cities_ipv4=(
     "北京联通:123.125.46.42"
     "北京移动:111.132.36.94"
     "上海电信:61.147.211.30"
-    "上海联通:220.249.135.45
-"
+    "上海联通:140.206.239.47"
     "上海移动:117.144.98.184"
     "广东电信:183.6.211.61"
     "广东联通:112.90.42.8"
@@ -39,8 +38,12 @@ ping_width=6  # 缩小ping宽度，减少ms和:之间的距离
 get_ping_result() {
     local address=$1
     local result
-    result=$(ping -c 4 $address 2>/dev/null | tail -n 1 | awk '{print int($4)}' | cut -d '/' -f 2)
-    echo "$result"
+    result=$(ping -c 4 -w 5 $address 2>/dev/null | tail -n 1 | awk '{print int($4)}' | cut -d '/' -f 2)
+    if [[ -z "$result" ]]; then
+        echo "失效"
+    else
+        echo "$result"
+    fi
 }
 
 # 测试 IPv4 地址
