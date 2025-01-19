@@ -4,7 +4,7 @@ orange="\033[38;5;208m"
 reset="\033[0m"
 #输出
 echo -e "${orange}欢迎使用Leu的nezha-agent一键卸载脚本${reset}"
-echo -e "${orange}更多脚本GitHub：https://github.com/leuxinovo/clearvps${reset}"
+echo -e "${orange}更多一键脚本GitHub：https://github.com/leuxinovo/clearvps${reset}"
 echo -e "${orange}-------------------------------------${reset}"
 
 # 停止 Nezha Agent 服务
@@ -39,3 +39,4 @@ systemctl daemon-reload
 
 echo "Nezha Agent 已成功移除。"
 echo -e "${orange}更多一键脚本GitHub：https://github.com/leuxinovo/clearvps${reset}"
+echo -e "${orange}-------------------------------------${reset}"
