@@ -1,12 +1,12 @@
 #!/bin/bash
 # 颜色代码
-orange="\033[93m"
+blue="\033[94m"
 reset="\033[0m"
 
 # 输出内容
-echo -e "${orange}欢迎使用Leu SSH公钥一键导入脚本${reset}"
-echo -e "${orange}本脚本将从GitHub 获取指定用户的SSH公钥并配置到当前VPS${reset}"
-echo -e "${orange}------------------------------------------------${reset}"
+echo -e "${blue}欢迎使用Leu SSH公钥一键导入脚本${reset}"
+echo -e "${blue}本脚本将从GitHub 获取指定用户的SSH公钥并配置到当前VPS${reset}"
+echo -e "${blue}------------------------------------------------${reset}"
 
 # 检查是否提供了 -g 参数
 while getopts ":g:" opt; do
