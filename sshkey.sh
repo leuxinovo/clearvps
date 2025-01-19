@@ -4,7 +4,7 @@ orange="\033[38;5;208m"
 reset="\033[0m"
 
 # 输出内容
-echo -e "${orange}欢迎使用 Leu SSH公钥一键导入脚本${reset}"
+echo -e "${orange}欢迎使用Leu SSH公钥一键导入脚本${reset}"
 echo -e "${orange}本脚本将从GitHub 获取指定用户的SSH公钥并配置到当前VPS${reset}"
 echo -e "${orange}------------------------------------------------${reset}"
 
