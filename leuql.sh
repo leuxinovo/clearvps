@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "欢迎使用Leu的清理脚本"
+echo "\033[38;5;208m欢迎使用Leu的清理脚本\033[0m"
 
 # 确保脚本以root权限运行
 if [[ $EUID -ne 0 ]]; then
