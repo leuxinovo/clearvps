@@ -1,10 +1,12 @@
 #!/bin/bash
+#颜色代码
+orange="\033[38;5;208m"
+reset="\033[0m"
 
-# 欢迎信息
-echo "=============================================="
-echo " 欢迎使用 Leu SSH公钥一键导入脚本"
-echo " 本脚本将从GitHub 获取指定用户的SSH公钥并配置到当前VPS"
-echo "=============================================="
+#输出内容
+echo -e "${orange}欢迎使用 Leu SSH公钥一键导入脚本${reset}"
+echo -e "${orange}本脚本将从GitHub 获取指定用户的SSH公钥并配置到当前VPS${reset}"
+echo -e "${orange}------------------------------------------------${reset}"
 
 # 检查是否提供了 GitHub 用户名
 if [ -z "$1" ]; then
@@ -47,6 +49,5 @@ echo "$SSH_KEYS" >> "$AUTHORIZED_KEYS"
 # 确保 authorized_keys 的权限正确
 chmod 600 "$AUTHORIZED_KEYS"
 
-echo "=============================================="
 echo "操作完成！GitHub用户$GITHUB_USERNAME的SSH公钥已成功添加到$AUTHORIZED_KEYS"
-echo "=============================================="
+echo "------------------------------------------------"
