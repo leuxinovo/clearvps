@@ -8,7 +8,7 @@ bash <(curl -sL https://raw.githubusercontent.com/leuxinovo/clearvps/main/leuql.
 ```
 #### ssh公钥一键导入脚本
 ```
-bash <(curl -sL https://raw.githubusercontent.com/leuxinovo/clearvps/main/sshkey.sh) github用户名
+bash <(curl -sL https://raw.githubusercontent.com/leuxinovo/clearvps/main/sshkey.sh) -g github用户名
 ```
 #### 各地区延迟测试脚本
 ```
