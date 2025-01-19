@@ -8,11 +8,11 @@ echo -e "${orange}更多一键脚本GitHub：https://github.com/leuxinovo/clearv
 echo -e "${orange}-------------------------------------${reset}"
 
 # 停止 Nezha Agent 服务
-echo "正在停止 Nezha Agent 服务..."
+echo "正在停止 nezha-agent服务..."
 systemctl stop nezha-agent 2>/dev/null || echo "nezha-agent服务未运行。"
 
 # 禁用开机自动启动
-echo "正在禁用 Nezha Agent 开机自动启动..."
+echo "正在禁用 nezha-agent开机自动启动..."
 systemctl disable nezha-agent 2>/dev/null || echo "nezha-agent未设置为开机启动。"
 
 # 删除 Nezha Agent 二进制文件
