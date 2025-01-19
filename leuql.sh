@@ -1,6 +1,9 @@
 #!/bin/bash
 #颜色代码
 orange="\033[38;5;208m"
+reset="\033[0m"
+
+#输出内容
 echo "${orange}欢迎使用Leu的清理脚本${reset}"
 
 # 确保脚本以root权限运行
