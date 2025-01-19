@@ -1,10 +1,10 @@
 #!/bin/bash
 #颜色代码
-orange="\033[93m"
+blue="\033[94m"
 reset="\033[0m"
 
 #输出内容
-echo -e "${orange}欢迎使用Leu VPS清理脚本${reset}"
+echo -e "${blue}欢迎使用Leu VPS清理脚本${reset}"
 
 # 确保脚本以root权限运行
 if [[ $EUID -ne 0 ]]; then
