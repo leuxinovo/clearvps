@@ -1,6 +1,6 @@
 #!/bin/bash
 #颜色
-orange="\033[38;5;208m"
+orange="\033[93m"
 reset="\033[0m"
 #输出
 echo -e "${orange}欢迎使用Leu nezha-agent一键卸载脚本${reset}"
