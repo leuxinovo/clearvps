@@ -1,20 +1,36 @@
 #!/bin/bash
-#颜色代码
+# 颜色代码
 orange="\033[38;5;208m"
 reset="\033[0m"
 
-#输出内容
+# 输出内容
 echo -e "${orange}欢迎使用 Leu SSH公钥一键导入脚本${reset}"
 echo -e "${orange}本脚本将从GitHub 获取指定用户的SSH公钥并配置到当前VPS${reset}"
 echo -e "${orange}------------------------------------------------${reset}"
 
-# 检查是否提供了 GitHub 用户名
-if [ -z "$1" ]; then
-    echo "用法错误：请在脚本后面加GitHub用户名"
+# 检查是否提供了 -g 参数
+while getopts ":g:" opt; do
+    case $opt in
+        g)
+            GITHUB_USERNAME="$OPTARG"
+            ;;
+        \?)
+            echo "无效的选项: -$OPTARG"
+            exit 1
+            ;;
+        :)
+            echo "选项 -$OPTARG 需要一个参数"
+            exit 1
+            ;;
+    esac
+done
+
+if [ -z "$GITHUB_USERNAME" ]; then
+    echo "用法错误：请使用 -g 选项指定 GitHub 用户名"
+    echo "示例: $0 -g GitHub用户名"
     exit 1
 fi
 
-GITHUB_USERNAME="$1"
 SSH_DIR="$HOME/.ssh"
 AUTHORIZED_KEYS="$SSH_DIR/authorized_keys"
 
