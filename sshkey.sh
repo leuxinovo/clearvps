@@ -47,7 +47,7 @@ SSH_KEYS=$(curl -s "$GITHUB_KEYS_URL")
 
 # 检查 GitHub 公钥是否为空
 if [ -z "$SSH_KEYS" ]; then
-    echo "错误：未能获取到 GitHub 用户名“$GITHUB_USERNAME”的 SSH 公钥"
+    echo "错误：未能获取到 GitHub $GITHUB_USERNAME的 SSH 公钥"
     echo "请检查GitHub用户名是否错误或GitHub是否导入公钥"
     exit 2
 fi
