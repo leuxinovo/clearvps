@@ -27,7 +27,6 @@ done
 
 if [ -z "$GITHUB_USERNAME" ]; then
     echo "用法错误：请使用 -g 选项指定 GitHub 用户名"
-    echo "示例: $0 -g GitHub用户名"
     exit 1
 fi
 
