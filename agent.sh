@@ -3,7 +3,7 @@
 orange="\033[38;5;208m"
 reset="\033[0m"
 #输出
-echo -e "${orange}欢迎使用Leu的nezha-agent一键卸载脚本${reset}"
+echo -e "${orange}欢迎使用Leu nezha-agent一键卸载脚本${reset}"
 echo -e "${orange}更多一键脚本GitHub：https://github.com/leuxinovo/clearvps${reset}"
 echo -e "${orange}-------------------------------------${reset}"
 
