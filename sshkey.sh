@@ -52,9 +52,9 @@ if [ -z "$SSH_KEYS" ]; then
 fi
 
 # 检查公钥是否已经存在于 authorized_keys 中
-if grep -Fxq "$SSH_KEYS" "$AUTHORIZED_KEYS"; then
+if grep -Fxq "$SSH_KEYS" "$AUTHORIZED_KEYS" 2>/dev/null; then
     echo "公钥已存在于$AUTHORIZED_KEYS中，无需重复添加"
-    exit 4
+    exit 0
 fi
 
 # 将 SSH 公钥写入 authorized_keys
