@@ -39,4 +39,5 @@ systemctl daemon-reload
 
 echo "nezha-agent 已成功移除。"
 echo -e "${blue}更多一键脚本GitHub：https://github.com/leuxinovo/clearvps${reset}"
+echo -e "${blue}我的博客：https://blog.leu.pp.ua${reset}"
 echo -e "${blue}-------------------------------------${reset}"
