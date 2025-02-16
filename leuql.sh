@@ -5,6 +5,8 @@ reset="\033[0m"
 
 #输出内容
 echo -e "${blue}欢迎使用Leu VPS清理脚本${reset}"
+echo -e "${blue}我的博客：https://blog.leu.pp.ua${reset}"
+
 
 # 确保脚本以root权限运行
 if [[ $EUID -ne 0 ]]; then
