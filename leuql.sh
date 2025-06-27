@@ -82,8 +82,8 @@ cleared_kb=$((end_space - start_space))
 # 智能单位输出，紧贴上面输出
 if [ "$cleared_kb" -ge 1048576 ]; then
     cleared_gb=$(awk "BEGIN {printf \"%.2f\", $cleared_kb/1048576}")
-    echo -e "✅ 系统清理完成，释放了约 ${cleared_gb} GB 空间"
+    echo -e "🧹 系统清理完成，释放了约 ${cleared_gb} GB 空间"
 else
     cleared_mb=$((cleared_kb / 1024))
-    echo -e "✅ 系统清理完成，释放了约 ${cleared_mb} MB 空间"
+    echo -e "🧹 系统清理完成，释放了约 ${cleared_mb} MB 空间"
 fi
