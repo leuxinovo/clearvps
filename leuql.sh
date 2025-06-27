@@ -75,16 +75,15 @@ if command -v docker &> /dev/null; then
     docker system prune -a -f --volumes > /dev/null 2>&1
 fi
 
-# 记录清理后的磁盘可用空间（单位：KB）
+# 计算清理后的磁盘可用空间（单位：KB）
 end_space=$(df --output=avail / | tail -n 1)
 cleared_kb=$((end_space - start_space))
 
-# 智能单位输出
-echo ""
+# 智能单位输出，紧贴上面输出
 if [ "$cleared_kb" -ge 1048576 ]; then
     cleared_gb=$(awk "BEGIN {printf \"%.2f\", $cleared_kb/1048576}")
-    echo -e "✅ ${blue}系统清理完成，释放了约 ${cleared_gb} GB 空间${reset}"
+    echo -e "✅ 系统清理完成，释放了约 ${cleared_gb} GB 空间"
 else
     cleared_mb=$((cleared_kb / 1024))
-    echo -e "✅ ${blue}系统清理完成，释放了约 ${cleared_mb} MB 空间${reset}"
+    echo -e "✅ 系统清理完成，释放了约 ${cleared_mb} MB 空间"
 fi
