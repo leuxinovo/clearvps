@@ -5,7 +5,7 @@ reset="\033[0m"
 #输出
 echo -e "${blue}欢迎使用Leu nezha-agent一键卸载脚本${reset}"
 echo -e "${blue}更多一键脚本GitHub：https://github.com/leuxinovo/clearvps${reset}"
-echo -e "${blue}我的博客：https://blog.leu.pp.ua${reset}"
+echo -e "${blue}我的博客：https://blog.techleu.de${reset}"
 echo -e "${blue}-------------------------------------${reset}"
 
 # 停止 Nezha Agent 服务
