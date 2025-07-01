@@ -54,6 +54,7 @@ scan_domain() {
     else
       echo "$domain 已注册" >> "$STATUS_FILE"
     fi
+    # 强制写入磁盘
     sync "$STATUS_FILE" "$OUTPUT_FILE"
     sleep 1
     return
