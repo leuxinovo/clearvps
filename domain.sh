@@ -22,7 +22,6 @@ check_whois() {
 }
 
 cleanup() {
-  # 使用全局的pid_file等变量
   if [[ -f "$pid_file" ]]; then
     pid=$(cat "$pid_file")
     if ps -p "$pid" > /dev/null 2>&1; then
@@ -43,7 +42,7 @@ run_scan_bg() {
   char_type="$2"
   length="$3"
 
-  # 设置全局变量路径，确保所有地方都能使用
+  # 设置全局变量路径
   output_file="$BASE_DIR/domain_${tld}.txt"
   status_file="$BASE_DIR/scan_status.log"
   pid_file="$BASE_DIR/scan_domains.pid"
@@ -104,7 +103,7 @@ start_scan() {
 
   read -rp "请输入要扫描的域名后缀（例如 de/com/net）: " tld
 
-  # 重新赋值全局路径变量
+  # 设置全局变量路径
   output_file="$BASE_DIR/domain_${tld}.txt"
   status_file="$BASE_DIR/scan_status.log"
   pid_file="$BASE_DIR/scan_domains.pid"
@@ -124,11 +123,12 @@ start_scan() {
   done
 
   while true; do
-    read -rp "请输入要扫描的位数（例如 3）: " length
+    read -rp "请输入要扫描的位数（正整数，例如 3）: " length
+    # 只允许正整数，排除小数和0开头的数字
     if [[ "$length" =~ ^[1-9][0-9]*$ ]]; then
       break
     else
-      echo "请输入有效的正整数"
+      echo "输入无效！请输入大于0的整数，且不能有小数点或前导零。"
     fi
   done
 
@@ -143,8 +143,6 @@ start_scan() {
 
 view_status() {
   ensure_dir
-
-  # 这里同样引用全局变量状态文件路径
   status_file="$BASE_DIR/scan_status.log"
 
   if [[ ! -f "$status_file" ]]; then
@@ -182,7 +180,6 @@ while true; do
 
   read -rp "请输入数字选择: " choice
 
-  # 输入检测，非法输入继续提示
   if [[ "$choice" =~ ^[0-3]$ ]]; then
     case "$choice" in
       1) start_scan ;;
