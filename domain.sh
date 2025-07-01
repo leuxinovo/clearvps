@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # 固定写入/root目录，避免路径解析问题，确保权限正常
-output_file="/root/domain.txt"
-status_file="/root/scan_status.log"
-pid_file="/root/scan_domains.pid"
-error_log="/root/scan_error.log"
+output_file="/root/domain/domain.txt"
+status_file="/root/domain/scan_status.log"
+pid_file="/root/domain/scan_domains.pid"
+error_log="/root/domain/scan_error.log"
 
 function check_whois() {
   if ! command -v whois >/dev/null 2>&1; then
