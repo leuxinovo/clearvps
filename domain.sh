@@ -1,19 +1,20 @@
 #!/bin/bash
 
-BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
-output_file="$BASE_DIR/domain.txt"
-status_file="$BASE_DIR/scan_status.log"
-pid_file="$BASE_DIR/scan_domains.pid"
-error_log="$BASE_DIR/scan_error.log"
+BASE_DIR="/root/domain"
+ensure_dir() {
+  if [[ ! -d "$BASE_DIR" ]]; then
+    mkdir -p "$BASE_DIR" || { echo "创建目录 $BASE_DIR 失败，退出"; exit 1; }
+  fi
+}
 
-function check_whois() {
+check_whois() {
   if ! command -v whois >/dev/null 2>&1; then
     echo "错误：系统未安装 whois，请先安装后重试。Debian/Ubuntu: apt install whois" >&2
     exit 1
   fi
 }
 
-function cleanup() {
+cleanup() {
   if [[ -f "$pid_file" ]]; then
     pid=$(cat "$pid_file")
     if ps -p "$pid" > /dev/null 2>&1; then
@@ -21,17 +22,23 @@ function cleanup() {
     fi
     rm -f "$pid_file"
   fi
-  rm -f "$output_file" "$status_file" "$error_log"
-  echo "卸载完成，已删除 $output_file $status_file $error_log 和 $pid_file"
+  rm -f "$status_file" "$error_log"
+  echo "卸载完成，已删除状态文件、日志和PID文件，保留域名文件"
   exit 0
 }
 
-function run_scan_bg() {
+run_scan_bg() {
   tld="$1"
   char_type="$2"
   length="$3"
 
   check_whois
+  ensure_dir
+
+  output_file="$BASE_DIR/domain_${tld}.txt"
+  status_file="$BASE_DIR/scan_status.log"
+  pid_file="$BASE_DIR/scan_domains.pid"
+  error_log="$BASE_DIR/scan_error.log"
 
   chars=()
   if [[ "$char_type" == "1" ]]; then
@@ -45,7 +52,6 @@ function run_scan_bg() {
     exit 1
   fi
 
-  > "$output_file"
   > "$status_file"
   > "$error_log"
   echo $$ > "$pid_file"
@@ -80,10 +86,11 @@ function run_scan_bg() {
   exit 0
 }
 
-function start_scan() {
+start_scan() {
   check_whois
+  ensure_dir
 
-  read -rp "请输入要扫描的域名后缀（例如de com net）: " tld
+  read -rp "请输入要扫描的域名后缀（例如 de/com/net）: " tld
 
   while true; do
     echo "请选择扫描字符类型："
@@ -111,23 +118,25 @@ function start_scan() {
 
   nohup bash "$0" run_bg "$tld" "$char_type" "$length" > /dev/null 2>>"$error_log" &
 
-  echo "后台扫描已启动，结果保存到 $output_file"
+  echo "后台扫描已启动，结果保存到 $BASE_DIR/domain_${tld}.txt"
   echo "停止扫描：kill \$(cat $pid_file)"
   echo "卸载脚本：运行本脚本选择 2"
 }
 
-function view_status() {
+view_status() {
+  ensure_dir
+  status_file="$BASE_DIR/scan_status.log"
+
   if [[ ! -f "$status_file" ]]; then
     echo "扫描状态文件不存在，暂无扫描任务"
     return
   fi
 
-  echo "实时查看扫描状态，按 0 退出"
+  echo "实时查看扫描状态，按 0 键退出"
 
   tail -n 20 -f "$status_file" &
   tail_pid=$!
 
-  # 不需要回车，直接读取单字符
   while true; do
     read -rsn1 key 2>/dev/null || true
     if [[ "$key" == "0" ]]; then
@@ -147,7 +156,7 @@ while true; do
   echo ""
   echo "请选择操作："
   echo "1. 安装并开始扫描（后台运行）"
-  echo "2. 卸载脚本（停止扫描+删除文件）"
+  echo "2. 卸载脚本（停止扫描+删除状态日志，不删除域名文件）"
   echo "3. 查看扫描状态（实时）"
   echo "0. 退出"
   read -rp "请输入数字选择: " choice
