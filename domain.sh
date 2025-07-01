@@ -1,6 +1,13 @@
 #!/bin/bash
 
 BASE_DIR="/root/domain"
+
+# 全局变量，所有函数共用
+output_file=""
+status_file=""
+pid_file=""
+error_log=""
+
 ensure_dir() {
   if [[ ! -d "$BASE_DIR" ]]; then
     mkdir -p "$BASE_DIR" || { echo "创建目录 $BASE_DIR 失败，退出"; exit 1; }
@@ -15,13 +22,17 @@ check_whois() {
 }
 
 cleanup() {
+  # 使用全局的pid_file等变量
   if [[ -f "$pid_file" ]]; then
     pid=$(cat "$pid_file")
     if ps -p "$pid" > /dev/null 2>&1; then
       kill "$pid" && echo "已停止后台扫描进程（PID: $pid）"
     fi
     rm -f "$pid_file"
+  else
+    echo "未发现扫描进程PID文件，无需停止扫描"
   fi
+
   rm -f "$status_file" "$error_log"
   echo "卸载完成，已删除状态文件、日志和PID文件，保留域名文件"
   exit 0
@@ -32,13 +43,14 @@ run_scan_bg() {
   char_type="$2"
   length="$3"
 
-  check_whois
-  ensure_dir
-
+  # 设置全局变量路径，确保所有地方都能使用
   output_file="$BASE_DIR/domain_${tld}.txt"
   status_file="$BASE_DIR/scan_status.log"
   pid_file="$BASE_DIR/scan_domains.pid"
   error_log="$BASE_DIR/scan_error.log"
+
+  check_whois
+  ensure_dir
 
   chars=()
   if [[ "$char_type" == "1" ]]; then
@@ -92,6 +104,12 @@ start_scan() {
 
   read -rp "请输入要扫描的域名后缀（例如 de/com/net）: " tld
 
+  # 重新赋值全局路径变量
+  output_file="$BASE_DIR/domain_${tld}.txt"
+  status_file="$BASE_DIR/scan_status.log"
+  pid_file="$BASE_DIR/scan_domains.pid"
+  error_log="$BASE_DIR/scan_error.log"
+
   while true; do
     echo "请选择扫描字符类型："
     echo "1. 纯数字"
@@ -118,13 +136,15 @@ start_scan() {
 
   nohup bash "$0" run_bg "$tld" "$char_type" "$length" > /dev/null 2>>"$error_log" &
 
-  echo "后台扫描已启动，结果保存到 $BASE_DIR/domain_${tld}.txt"
+  echo "后台扫描已启动，结果保存到 $output_file"
   echo "停止扫描：kill \$(cat $pid_file)"
   echo "卸载脚本：运行本脚本选择 2"
 }
 
 view_status() {
   ensure_dir
+
+  # 这里同样引用全局变量状态文件路径
   status_file="$BASE_DIR/scan_status.log"
 
   if [[ ! -f "$status_file" ]]; then
@@ -159,8 +179,10 @@ while true; do
   echo "2. 卸载脚本（停止扫描+删除状态日志，不删除域名文件）"
   echo "3. 查看扫描状态（实时）"
   echo "0. 退出"
+
   read -rp "请输入数字选择: " choice
 
+  # 输入检测，非法输入继续提示
   if [[ "$choice" =~ ^[0-3]$ ]]; then
     case "$choice" in
       1) start_scan ;;
