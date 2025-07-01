@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# 固定写入/root目录，避免路径解析问题，确保权限正常
-output_file="/root/domain/domain.txt"
-status_file="/root/domain/scan_status.log"
-pid_file="/root/domain/scan_domains.pid"
-error_log="/root/domain/scan_error.log"
+# 取脚本当前目录，保证文件写入脚本目录下
+BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
+output_file="$BASE_DIR/domain.txt"
+status_file="$BASE_DIR/scan_status.log"
+pid_file="$BASE_DIR/scan_domains.pid"
+error_log="$BASE_DIR/scan_error.log"
 
 function check_whois() {
   if ! command -v whois >/dev/null 2>&1; then
@@ -93,6 +94,9 @@ function start_scan() {
 
   read -rp "请输入要扫描的位数（例如 3）: " length
 
+  # 确保后台运行的工作目录是脚本目录
+  cd "$BASE_DIR" || { echo "切换目录失败，退出"; exit 1; }
+
   nohup bash "$0" run_bg "$tld" "$char_type" "$length" > /dev/null 2>>"$error_log" &
 
   echo "后台扫描已启动，结果保存到 $output_file"
@@ -112,14 +116,14 @@ function view_status() {
   tail_pid=$!
 
   while true; do
-    read -r -t 1 -n 1 key
+    read -r -t 0.5 -n 1 key 2>/dev/null || true
     if [[ "$key" == "0" ]]; then
       kill "$tail_pid" 2>/dev/null
+      wait "$tail_pid" 2>/dev/null
+      echo -e "\n退出查看"
       break
     fi
   done
-
-  echo "退出查看"
 }
 
 if [[ "$1" == "run_bg" ]]; then
