@@ -46,7 +46,6 @@ run_scan_bg() {
   output_file="$BASE_DIR/domain_${tld}.txt"
   status_file="$BASE_DIR/scan_status.log"
   error_log="$BASE_DIR/scan_error.log"
-  # pid_file 不写入，这里后台启动外层写入
 
   chars=()
   if [[ "$char_type" == "1" ]]; then
@@ -63,7 +62,6 @@ run_scan_bg() {
   > "$status_file"
   > "$error_log"
 
-  # 递归生成并检测域名
   scan_domain() {
     local prefix=$1
     local depth=$2
@@ -71,15 +69,17 @@ run_scan_bg() {
     if [[ $depth -eq $length ]]; then
       local domain="${prefix}.${tld}"
 
-      # whois查询
       result=$(whois "$domain" 2>>"$error_log")
-      # 判断是否未注册，包含多种whois未注册提示关键字
+
       if echo "$result" | grep -iqE "status: free|status: available|no entries found|NOT FOUND|No match|No Data Found|Status: free"; then
         echo "$domain 未注册" >> "$status_file"
         echo "$domain" >> "$output_file"
       else
         echo "$domain 已注册" >> "$status_file"
       fi
+
+      # 立即刷新输出
+      sync "$status_file" "$output_file"
 
       sleep 1
       return
@@ -102,10 +102,8 @@ start_scan() {
 
   read -rp "请输入要扫描的域名后缀（例如 de/com/net）: " tld
 
-  # 生成对应的输出文件路径
   output_file="$BASE_DIR/domain_${tld}.txt"
 
-  # 交互选择字符类型
   while true; do
     echo "请选择扫描字符类型："
     echo "1. 纯数字"
@@ -119,7 +117,6 @@ start_scan() {
     fi
   done
 
-  # 交互输入位数，必须是大于0的正整数
   while true; do
     read -rp "请输入要扫描的位数（正整数，例如 3）: " length
     if [[ "$length" =~ ^[1-9][0-9]*$ ]]; then
@@ -152,7 +149,6 @@ view_status() {
   tail -n 20 -f "$status_file" &
   tail_pid=$!
 
-  # 监听单键输入，按0退出查看
   while true; do
     read -rsn1 key 2>/dev/null || true
     if [[ "$key" == "0" ]]; then
