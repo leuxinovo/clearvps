@@ -1,17 +1,13 @@
 #!/bin/bash
 
 BASE_DIR="/root/domain"
-
-# 全局变量，所有函数共用
+pid_file="$BASE_DIR/scan_domains.pid"
+status_file="$BASE_DIR/scan_status.log"
+error_log="$BASE_DIR/scan_error.log"
 output_file=""
-status_file=""
-pid_file=""
-error_log=""
 
 ensure_dir() {
-  if [[ ! -d "$BASE_DIR" ]]; then
-    mkdir -p "$BASE_DIR" || { echo "创建目录 $BASE_DIR 失败，退出"; exit 1; }
-  fi
+  [[ -d "$BASE_DIR" ]] || mkdir -p "$BASE_DIR"
 }
 
 check_whois() {
@@ -24,8 +20,10 @@ check_whois() {
 cleanup() {
   if [[ -f "$pid_file" ]]; then
     pid=$(cat "$pid_file")
-    if ps -p "$pid" > /dev/null 2>&1; then
+    if [[ -n "$pid" ]] && ps -p "$pid" > /dev/null 2>&1; then
       kill "$pid" && echo "已停止后台扫描进程（PID: $pid）"
+    else
+      echo "扫描进程未运行"
     fi
     rm -f "$pid_file"
   else
@@ -33,7 +31,7 @@ cleanup() {
   fi
 
   rm -f "$status_file" "$error_log"
-  echo "卸载完成，已删除状态文件、日志和PID文件，保留域名文件"
+  echo "卸载完成，状态文件和日志已删除，域名文件保留"
   exit 0
 }
 
@@ -42,14 +40,13 @@ run_scan_bg() {
   char_type="$2"
   length="$3"
 
-  # 设置全局变量路径
+  ensure_dir
+  check_whois
+
   output_file="$BASE_DIR/domain_${tld}.txt"
   status_file="$BASE_DIR/scan_status.log"
-  pid_file="$BASE_DIR/scan_domains.pid"
   error_log="$BASE_DIR/scan_error.log"
-
-  check_whois
-  ensure_dir
+  # pid_file 不写入，这里后台启动外层写入
 
   chars=()
   if [[ "$char_type" == "1" ]]; then
@@ -65,17 +62,19 @@ run_scan_bg() {
 
   > "$status_file"
   > "$error_log"
-  echo $$ > "$pid_file"
 
-  function scan_domain() {
+  # 递归生成并检测域名
+  scan_domain() {
     local prefix=$1
     local depth=$2
 
     if [[ $depth -eq $length ]]; then
       local domain="${prefix}.${tld}"
 
+      # whois查询
       result=$(whois "$domain" 2>>"$error_log")
-      if echo "$result" | grep -iqE "status: free|status: available|no entries found|NOT FOUND|No match"; then
+      # 判断是否未注册，包含多种whois未注册提示关键字
+      if echo "$result" | grep -iqE "status: free|status: available|no entries found|NOT FOUND|No match|No Data Found|Status: free"; then
         echo "$domain 未注册" >> "$status_file"
         echo "$domain" >> "$output_file"
       else
@@ -98,17 +97,15 @@ run_scan_bg() {
 }
 
 start_scan() {
-  check_whois
   ensure_dir
+  check_whois
 
   read -rp "请输入要扫描的域名后缀（例如 de/com/net）: " tld
 
-  # 设置全局变量路径
+  # 生成对应的输出文件路径
   output_file="$BASE_DIR/domain_${tld}.txt"
-  status_file="$BASE_DIR/scan_status.log"
-  pid_file="$BASE_DIR/scan_domains.pid"
-  error_log="$BASE_DIR/scan_error.log"
 
+  # 交互选择字符类型
   while true; do
     echo "请选择扫描字符类型："
     echo "1. 纯数字"
@@ -122,9 +119,9 @@ start_scan() {
     fi
   done
 
+  # 交互输入位数，必须是大于0的正整数
   while true; do
     read -rp "请输入要扫描的位数（正整数，例如 3）: " length
-    # 只允许正整数，排除小数和0开头的数字
     if [[ "$length" =~ ^[1-9][0-9]*$ ]]; then
       break
     else
@@ -135,6 +132,7 @@ start_scan() {
   cd "$BASE_DIR" || { echo "切换目录失败，退出"; exit 1; }
 
   nohup bash "$0" run_bg "$tld" "$char_type" "$length" > /dev/null 2>>"$error_log" &
+  echo $! > "$pid_file"
 
   echo "后台扫描已启动，结果保存到 $output_file"
   echo "停止扫描：kill \$(cat $pid_file)"
@@ -143,7 +141,6 @@ start_scan() {
 
 view_status() {
   ensure_dir
-  status_file="$BASE_DIR/scan_status.log"
 
   if [[ ! -f "$status_file" ]]; then
     echo "扫描状态文件不存在，暂无扫描任务"
@@ -155,6 +152,7 @@ view_status() {
   tail -n 20 -f "$status_file" &
   tail_pid=$!
 
+  # 监听单键输入，按0退出查看
   while true; do
     read -rsn1 key 2>/dev/null || true
     if [[ "$key" == "0" ]]; then
