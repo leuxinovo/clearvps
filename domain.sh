@@ -31,7 +31,7 @@ cleanup() {
   fi
 
   rm -f "$STATUS_FILE" "$ERROR_LOG"
-  echo "卸载完成：状态文件和日志已删除，域名文件保留"
+  echo "卸载完成：状态文件和日志已删除，域名结果文件保留"
   exit 0
 }
 
@@ -54,9 +54,7 @@ scan_domain() {
     else
       echo "$domain 已注册" >> "$STATUS_FILE"
     fi
-    # 强制写入磁盘
     sync "$STATUS_FILE" "$OUTPUT_FILE"
-    sleep 1
     return
   fi
 
@@ -124,7 +122,7 @@ start_scan() {
   echo $! > "$PID_FILE"
 
   echo "后台扫描已启动，结果保存到 $OUTPUT_FILE"
-  echo "停止扫描：kill \$(cat $PID_FILE)"
+  echo "停止扫描命令：kill \$(cat $PID_FILE)"
   echo "卸载脚本：运行本脚本选择 2"
 }
 
