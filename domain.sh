@@ -78,7 +78,7 @@ run_scan_bg() {
         echo "$domain 已注册" >> "$status_file"
       fi
 
-      # 立即刷新输出
+      # 尽快写入硬盘
       sync "$status_file" "$output_file"
 
       sleep 1
@@ -90,7 +90,9 @@ run_scan_bg() {
     done
   }
 
-  scan_domain "" 0
+  # 用stdbuf保证行缓冲，防止写入缓冲
+  stdbuf -oL bash -c "scan_domain \"\" 0"
+
   echo "扫描完成！" >> "$status_file"
   rm -f "$pid_file"
   exit 0
@@ -128,7 +130,7 @@ start_scan() {
 
   cd "$BASE_DIR" || { echo "切换目录失败，退出"; exit 1; }
 
-  nohup bash "$0" run_bg "$tld" "$char_type" "$length" > /dev/null 2>>"$error_log" &
+  nohup stdbuf -oL bash "$0" run_bg "$tld" "$char_type" "$length" > /dev/null 2>>"$error_log" &
   echo $! > "$pid_file"
 
   echo "后台扫描已启动，结果保存到 $output_file"
