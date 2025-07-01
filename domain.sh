@@ -1,6 +1,7 @@
 #!/bin/bash
 
 output_file="domain.txt"
+status_file="scan_status.log"
 pid_file="scan_domains.pid"
 
 function cleanup() {
@@ -11,8 +12,8 @@ function cleanup() {
     fi
     rm -f "$pid_file"
   fi
-  rm -f "$output_file"
-  echo "卸载完成，已删除 $output_file 和 $pid_file"
+  rm -f "$output_file" "$status_file"
+  echo "卸载完成，已删除 $output_file 和 $status_file 及 $pid_file"
   exit 0
 }
 
@@ -34,6 +35,7 @@ function run_scan_bg() {
   fi
 
   > "$output_file"
+  > "$status_file"
   echo $$ > "$pid_file"
 
   function scan_domain() {
@@ -44,7 +46,10 @@ function run_scan_bg() {
       local domain="${prefix}.${tld}"
       result=$(whois "$domain" 2>/dev/null)
       if echo "$result" | grep -iqE "status: free|status: available|no entries found"; then
+        echo "$domain 未注册" >> "$status_file"
         echo "$domain" >> "$output_file"
+      else
+        echo "$domain 已注册" >> "$status_file"
       fi
       sleep 1
       return
@@ -56,41 +61,61 @@ function run_scan_bg() {
   }
 
   scan_domain "" 0
-  echo "扫描完成！"
+  echo "扫描完成！" >> "$status_file"
   rm -f "$pid_file"
   exit 0
 }
 
 function start_scan() {
-  echo "请输入要扫描的域名后缀（例如 de/com/net）:"
-  read tld
+  read -rp "请输入要扫描的域名后缀（例如de com）: " tld
 
   echo "请选择扫描字符类型："
   echo "1) 纯数字"
   echo "2) 纯字母"
   echo "3) 数字+字母混合"
-  read char_type
+  read -rp "选择（1/2/3）: " char_type
 
-  echo "请输入要扫描的位数（例如 3）:"
-  read length
+  read -rp "请输入要扫描的位数（例如 3）: " length
 
-  echo "开始后台运行扫描，结果保存到 $output_file"
   nohup bash "$0" run_bg "$tld" "$char_type" "$length" >/dev/null 2>&1 &
 
-  echo "后台扫描已启动，查看结果请查看 $output_file"
+  echo "后台扫描已启动，结果保存到 $output_file"
   echo "停止扫描：kill \$(cat $pid_file)"
   echo "卸载脚本：运行本脚本选择 2"
+}
+
+function view_status() {
+  if [[ ! -f "$status_file" ]]; then
+    echo "扫描状态文件不存在，暂无扫描任务"
+    return
+  fi
+
+  echo "实时查看扫描状态，输入 0 并回车退出"
+
+  tail -n 20 -f "$status_file" &
+  tail_pid=$!
+
+  while true; do
+    read -r -t 1 -n 1 key
+    if [[ "$key" == "0" ]]; then
+      kill "$tail_pid" 2>/dev/null
+      break
+    fi
+  done
+
+  echo "退出查看"
 }
 
 if [[ "$1" == "run_bg" ]]; then
   run_scan_bg "$2" "$3" "$4"
 fi
 
-# 主菜单
 echo "请选择操作："
-echo "1) 安装并开始扫描（后台运行）"
+echo "1) 安装并开始扫描（支持后台运行）"
 echo "2) 卸载脚本（停止扫描+删除文件）"
-read choice
+echo "3) 查看扫描状态（实时）"
+echo "0) 退出"
+read -rp "请输入数字选择: " choice
 
 case "$choice" in
   1)
@@ -98,6 +123,13 @@ case "$choice" in
     ;;
   2)
     cleanup
+    ;;
+  3)
+    view_status
+    ;;
+  0)
+    echo "退出"
+    exit 0
     ;;
   *)
     echo "无效选择，退出"
