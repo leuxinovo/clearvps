@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# 输出文件均使用脚本当前目录绝对路径，避免路径混乱
-BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
-output_file="$BASE_DIR/domain.txt"
-status_file="$BASE_DIR/scan_status.log"
-pid_file="$BASE_DIR/scan_domains.pid"
-error_log="$BASE_DIR/scan_error.log"
+# 固定写入/root目录，避免路径解析问题，确保权限正常
+output_file="/root/domain.txt"
+status_file="/root/scan_status.log"
+pid_file="/root/scan_domains.pid"
+error_log="/root/scan_error.log"
 
 function check_whois() {
   if ! command -v whois >/dev/null 2>&1; then
@@ -32,10 +31,8 @@ function run_scan_bg() {
   char_type="$2"
   length="$3"
 
-  # 检查 whois
   check_whois
 
-  # 生成字符集
   chars=()
   if [[ "$char_type" == "1" ]]; then
     chars=( {0..9} )
@@ -53,7 +50,6 @@ function run_scan_bg() {
   > "$error_log"
   echo $$ > "$pid_file"
 
-  # 扫描函数
   function scan_domain() {
     local prefix=$1
     local depth=$2
@@ -61,7 +57,6 @@ function run_scan_bg() {
     if [[ $depth -eq $length ]]; then
       local domain="${prefix}.${tld}"
 
-      # whois 查询，捕获错误到日志
       result=$(whois "$domain" 2>>"$error_log")
       if echo "$result" | grep -iqE "status: free|status: available|no entries found|NOT FOUND|No match"; then
         echo "$domain 未注册" >> "$status_file"
@@ -97,9 +92,6 @@ function start_scan() {
   read -rp "选择（1/2/3）: " char_type
 
   read -rp "请输入要扫描的位数（例如 3）: " length
-
-  # 确保后台启动目录是脚本所在目录
-  cd "$BASE_DIR" || { echo "无法切换到脚本目录，退出"; exit 1; }
 
   nohup bash "$0" run_bg "$tld" "$char_type" "$length" > /dev/null 2>>"$error_log" &
 
