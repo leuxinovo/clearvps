@@ -1,8 +1,18 @@
 #!/bin/bash
 
-output_file="domain.txt"
-status_file="scan_status.log"
-pid_file="scan_domains.pid"
+# 输出文件均使用脚本当前目录绝对路径，避免路径混乱
+BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
+output_file="$BASE_DIR/domain.txt"
+status_file="$BASE_DIR/scan_status.log"
+pid_file="$BASE_DIR/scan_domains.pid"
+error_log="$BASE_DIR/scan_error.log"
+
+function check_whois() {
+  if ! command -v whois >/dev/null 2>&1; then
+    echo "错误：系统未安装 whois，请先安装后重试。Debian/Ubuntu: apt install whois" >&2
+    exit 1
+  fi
+}
 
 function cleanup() {
   if [[ -f "$pid_file" ]]; then
@@ -12,8 +22,8 @@ function cleanup() {
     fi
     rm -f "$pid_file"
   fi
-  rm -f "$output_file" "$status_file"
-  echo "卸载完成，已删除 $output_file 和 $status_file 及 $pid_file"
+  rm -f "$output_file" "$status_file" "$error_log"
+  echo "卸载完成，已删除 $output_file $status_file $error_log 和 $pid_file"
   exit 0
 }
 
@@ -22,6 +32,10 @@ function run_scan_bg() {
   char_type="$2"
   length="$3"
 
+  # 检查 whois
+  check_whois
+
+  # 生成字符集
   chars=()
   if [[ "$char_type" == "1" ]]; then
     chars=( {0..9} )
@@ -30,27 +44,32 @@ function run_scan_bg() {
   elif [[ "$char_type" == "3" ]]; then
     chars=( {0..9} {a..z} )
   else
-    echo "无效字符类型，退出"
+    echo "无效字符类型，退出" >&2
     exit 1
   fi
 
   > "$output_file"
   > "$status_file"
+  > "$error_log"
   echo $$ > "$pid_file"
 
+  # 扫描函数
   function scan_domain() {
     local prefix=$1
     local depth=$2
 
     if [[ $depth -eq $length ]]; then
       local domain="${prefix}.${tld}"
-      result=$(whois "$domain" 2>/dev/null)
-      if echo "$result" | grep -iqE "status: free|status: available|no entries found"; then
+
+      # whois 查询，捕获错误到日志
+      result=$(whois "$domain" 2>>"$error_log")
+      if echo "$result" | grep -iqE "status: free|status: available|no entries found|NOT FOUND|No match"; then
         echo "$domain 未注册" >> "$status_file"
         echo "$domain" >> "$output_file"
       else
         echo "$domain 已注册" >> "$status_file"
       fi
+
       sleep 1
       return
     fi
@@ -67,7 +86,9 @@ function run_scan_bg() {
 }
 
 function start_scan() {
-  read -rp "请输入要扫描的域名后缀（例如de com）: " tld
+  check_whois
+
+  read -rp "请输入要扫描的域名后缀（例如 de/com/net）: " tld
 
   echo "请选择扫描字符类型："
   echo "1) 纯数字"
@@ -77,7 +98,10 @@ function start_scan() {
 
   read -rp "请输入要扫描的位数（例如 3）: " length
 
-  nohup bash "$0" run_bg "$tld" "$char_type" "$length" >/dev/null 2>&1 &
+  # 确保后台启动目录是脚本所在目录
+  cd "$BASE_DIR" || { echo "无法切换到脚本目录，退出"; exit 1; }
+
+  nohup bash "$0" run_bg "$tld" "$char_type" "$length" > /dev/null 2>>"$error_log" &
 
   echo "后台扫描已启动，结果保存到 $output_file"
   echo "停止扫描：kill \$(cat $pid_file)"
@@ -111,7 +135,7 @@ if [[ "$1" == "run_bg" ]]; then
 fi
 
 echo "请选择操作："
-echo "1) 安装并开始扫描（支持后台运行）"
+echo "1) 安装并开始扫描（后台运行）"
 echo "2) 卸载脚本（停止扫描+删除文件）"
 echo "3) 查看扫描状态（实时）"
 echo "0) 退出"
