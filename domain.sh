@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# 取脚本当前目录，保证文件写入脚本目录下
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 output_file="$BASE_DIR/domain.txt"
 status_file="$BASE_DIR/scan_status.log"
@@ -84,17 +83,30 @@ function run_scan_bg() {
 function start_scan() {
   check_whois
 
-  read -rp "请输入要扫描的域名后缀（例如 de/com/net）: " tld
+  read -rp "请输入要扫描的域名后缀（例如de com net）: " tld
 
-  echo "请选择扫描字符类型："
-  echo "1) 纯数字"
-  echo "2) 纯字母"
-  echo "3) 数字+字母混合"
-  read -rp "选择（1/2/3）: " char_type
+  while true; do
+    echo "请选择扫描字符类型："
+    echo "1. 纯数字"
+    echo "2. 纯字母"
+    echo "3. 数字+字母混合"
+    read -rp "选择（1/2/3）: " char_type
+    if [[ "$char_type" =~ ^[123]$ ]]; then
+      break
+    else
+      echo "输入错误，请输入数字1、2或3"
+    fi
+  done
 
-  read -rp "请输入要扫描的位数（例如 3）: " length
+  while true; do
+    read -rp "请输入要扫描的位数（例如 3）: " length
+    if [[ "$length" =~ ^[1-9][0-9]*$ ]]; then
+      break
+    else
+      echo "请输入有效的正整数"
+    fi
+  done
 
-  # 确保后台运行的工作目录是脚本目录
   cd "$BASE_DIR" || { echo "切换目录失败，退出"; exit 1; }
 
   nohup bash "$0" run_bg "$tld" "$char_type" "$length" > /dev/null 2>>"$error_log" &
@@ -110,13 +122,14 @@ function view_status() {
     return
   fi
 
-  echo "实时查看扫描状态，输入 0 并回车退出"
+  echo "实时查看扫描状态，按 0 退出"
 
   tail -n 20 -f "$status_file" &
   tail_pid=$!
 
+  # 不需要回车，直接读取单字符
   while true; do
-    read -r -t 0.5 -n 1 key 2>/dev/null || true
+    read -rsn1 key 2>/dev/null || true
     if [[ "$key" == "0" ]]; then
       kill "$tail_pid" 2>/dev/null
       wait "$tail_pid" 2>/dev/null
@@ -130,29 +143,23 @@ if [[ "$1" == "run_bg" ]]; then
   run_scan_bg "$2" "$3" "$4"
 fi
 
-echo "请选择操作："
-echo "1) 安装并开始扫描（后台运行）"
-echo "2) 卸载脚本（停止扫描+删除文件）"
-echo "3) 查看扫描状态（实时）"
-echo "0) 退出"
-read -rp "请输入数字选择: " choice
+while true; do
+  echo ""
+  echo "请选择操作："
+  echo "1. 安装并开始扫描（后台运行）"
+  echo "2. 卸载脚本（停止扫描+删除文件）"
+  echo "3. 查看扫描状态（实时）"
+  echo "0. 退出"
+  read -rp "请输入数字选择: " choice
 
-case "$choice" in
-  1)
-    start_scan
-    ;;
-  2)
-    cleanup
-    ;;
-  3)
-    view_status
-    ;;
-  0)
-    echo "退出"
-    exit 0
-    ;;
-  *)
-    echo "无效选择，退出"
-    exit 1
-    ;;
-esac
+  if [[ "$choice" =~ ^[0-3]$ ]]; then
+    case "$choice" in
+      1) start_scan ;;
+      2) cleanup ;;
+      3) view_status ;;
+      0) echo "退出"; exit 0 ;;
+    esac
+  else
+    echo "输入错误，请输入数字 0-3"
+  fi
+done
