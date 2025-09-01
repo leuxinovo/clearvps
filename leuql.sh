@@ -6,7 +6,7 @@ reset="\033[0m"
 
 # 欢迎信息
 echo -e "${blue}欢迎使用 Leu清理脚本${reset}"
-echo -e "${blue}我的博客：https://blog.techleu.de${reset}"
+echo -e "${blue}我的博客：https://blog.leuxx.de${reset}"
 
 # 确保以 root 运行
 if [[ $EUID -ne 0 ]]; then
