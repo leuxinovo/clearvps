@@ -14,3 +14,7 @@ bash <(curl -sL https://raw.githubusercontent.com/leuxinovo/clearvps/main/sshkey
 ```
 bash <(curl -sL https://raw.githubusercontent.com/leuxinovo/clearvps/main/ping.sh)
 ```
+#### 一键升级debian13脚本
+```
+bash <(curl -fsSL https://raw.githubusercontent.com/leuxinovo/clearvps/refs/heads/main/upgrade-to-debian13.sh)
+```
