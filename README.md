@@ -18,3 +18,7 @@ bash <(curl -sL https://raw.githubusercontent.com/leuxinovo/clearvps/main/ping.s
 ```
 bash <(curl -fsSL https://raw.githubusercontent.com/leuxinovo/clearvps/refs/heads/main/upgrade-to-debian13.sh)
 ```
+#### bbr切换脚本
+```
+bash <(curl -fsSL https://raw.githubusercontent.com/leuxinovo/clearvps/refs/heads/main/stwich-bbr.sh)
+```
