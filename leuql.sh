@@ -69,7 +69,7 @@ log "磁盘占用（根分区）："; df -h / | sed 's/^/  /'
 log "内存占用："; free -h | sed 's/^/  /'
 ok "概况完成"
 
-# ====== 记录清理前可用空间 =======
+# ====== 清理前记录磁盘可用空间 =======
 start_space=$(df --output=avail / | tail -n1)
 
 # ====== APT/Dpkg 锁处理 =======
@@ -130,12 +130,12 @@ title "📊 汇总报告" "展示清理后资源状态"
 df -h / | sed 's/^/  /'
 free -h | sed 's/^/  /'
 
-# 记录清理前可用空间（确保 start_space 已定义）
-start_space=${start_space:-$(df --output=avail / | tail -n1)}
-
 # 计算释放空间
 end_space=$(df --output=avail / | tail -n1)
 cleared_kb=$(( end_space - start_space ))
+
+# 防止负数
+[ $cleared_kb -lt 0 ] && cleared_kb=0
 
 # 美化输出：星星 ✨ + 清理完成 + 释放空间
 if [ "$cleared_kb" -ge 1048576 ]; then
