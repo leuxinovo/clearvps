@@ -133,6 +133,15 @@ else
     warn "未检测到 Docker，跳过"
 fi
 
+# ====== 清理后记录磁盘可用空间 =======
+end_space=$(df --output=avail / | tail -n1 | tr -dc '0-9')
+start_space=${start_space:-0}
+end_space=${end_space:-0}
+
+# ====== 计算释放空间 =======
+cleared_kb=$(( end_space - start_space ))
+[ $cleared_kb -lt 0 ] && cleared_kb=0
+
 # ====== 美化输出：星星 ✨ + 清理完成 + 释放空间 =====
 if [ "$cleared_kb" -ge 1048576 ]; then
     cleared_gb=$(awk "BEGIN {printf \"%.2f\", $cleared_kb/1048576}")
