@@ -121,28 +121,21 @@ NI "find / -xdev -type f -name '*.pyc' -delete 2>/dev/null || true"
 ok "系统瘦身完成"
 
 # ====== 汇总 =======
-title "📊 汇总报告" "清理完成后的资源状态"
-
-# 清理前可用空间
-start_space=$(df --output=avail / | tail -n1)
+title "📊 汇总报告" "展示清理后资源状态"
 
 # 显示当前磁盘和内存
 df -h / | sed 's/^/  /'
 free -h | sed 's/^/  /'
 
-# 清理后可用空间
+# 计算释放空间
 end_space=$(df --output=avail / | tail -n1)
 cleared_kb=$(( end_space - start_space ))
 
-# 智能单位输出
+# 美化输出：星星 ✨ + 清理完成 + 释放空间
 if [ "$cleared_kb" -ge 1048576 ]; then
     cleared_gb=$(awk "BEGIN {printf \"%.2f\", $cleared_kb/1048576}")
-    hr
-    echo -e "${B}${GRN}✔ Leu 清理脚本执行完成，释放了约 ${cleared_gb} GB 空间${C0}"
-    hr
+    title "✨ Leu 清理脚本执行完成" "释放空间约 ${cleared_gb} GB"
 else
     cleared_mb=$(( cleared_kb / 1024 ))
-    hr
-    echo -e "${B}${GRN}✔ Leu 清理脚本执行完成，释放了约 ${cleared_mb} MB 空间${C0}"
-    hr
+    title "✨ Leu 清理脚本执行完成" "释放空间约 ${cleared_mb} MB"
 fi
