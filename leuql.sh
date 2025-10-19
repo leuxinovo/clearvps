@@ -10,8 +10,17 @@ IFS=$'\n\t'
 
 # ====== 美观输出 ======
 C0="\033[0m"; B="\033[1m"; BLU="\033[38;5;33m"; GRN="\033[38;5;40m"; YEL="\033[38;5;178m"; RED="\033[38;5;196m"; CYA="\033[36m"; GY="\033[90m"
+
 hr(){ printf "${GY}%s${C0}\n" "────────────────────────────────────────────────────────"; }
-title(){ printf "\n${B}${BLU}%s${C0}%s\n" "$1" "$2"; hr; }
+
+title(){
+    # $1 = 方括号内标题
+    # $2 = 方括号外说明
+    local left="[$1]"
+    printf "\n${B}${BLU}%s${C0} %s\n" "$left" "$2"
+    hr
+}
+
 ok(){ printf "${GRN}✔${C0} %s\n" "$*"; }
 warn(){ printf "${YEL}⚠${C0} %s\n" "$*"; }
 err(){ printf "${RED}✘${C0} %s\n" "$*"; }
@@ -71,7 +80,8 @@ log "内存占用："; free -h | sed 's/^/  /'
 ok "概况完成"
 
 # ====== 清理前记录磁盘可用空间 =======
-start_space=$(df --output=avail / | tail -n1)
+start_space=$(df --output=avail / | tail -n1 | tr -dc '0-9')
+start_space=${start_space:-0}
 
 # ====== APT/Dpkg 锁处理 =======
 if [ "$PKG" = "apt" ]; then
@@ -135,7 +145,6 @@ fi
 
 # ====== 清理后记录磁盘可用空间 =======
 end_space=$(df --output=avail / | tail -n1 | tr -dc '0-9')
-start_space=${start_space:-0}
 end_space=${end_space:-0}
 
 # ====== 计算释放空间 =======
@@ -145,8 +154,8 @@ cleared_kb=$(( end_space - start_space ))
 # ====== 美化输出：星星 ✨ + 清理完成 + 释放空间 =====
 if [ "$cleared_kb" -ge 1048576 ]; then
     cleared_gb=$(awk "BEGIN {printf \"%.2f\", $cleared_kb/1048576}")
-    title "[✨ Leu清理脚本执行完成 ]" " 释放空间约 ${cleared_gb} GB"
+    title "✨ Leu清理脚本执行完成" "释放空间约 ${cleared_gb} GB"
 else
     cleared_mb=$(( cleared_kb / 1024 ))
-    title "[✨ Leu清理脚本执行完成 ]" " 释放空间约 ${cleared_mb} MB"
+    title "✨ Leu清理脚本执行完成" "释放空间约 ${cleared_mb} MB"
 fi
