@@ -148,11 +148,11 @@ cleared_kb=$(( end_space - start_space ))
 
 # ====== 美化输出：星星 ✨ + 清理完成 + 释放空间 =====
 if [ "$cleared_kb" -eq 0 ]; then
-    title "✨ Leu清理脚本执行完成" "释放空间约 0 MB"
+    title "✨ Leu 清理脚本执行完成" "释放空间约 0 MB"
 elif [ "$cleared_kb" -ge 1048576 ]; then
     cleared_gb=$(awk "BEGIN {printf \"%.2f\", $cleared_kb/1048576}")
-    title "✨ Leu清理脚本执行完成" "释放空间约 ${cleared_gb} GB"
+    title "✨ Leu 清理脚本执行完成" "释放空间约 ${cleared_gb} GB"
 else
     cleared_mb=$(awk "BEGIN {printf \"%.2f\", $cleared_kb/1024}")
-    title "✨ Leu清理脚本执行完成" "释放空间约 ${cleared_mb} MB"
+    title "✨ Leu 清理脚本执行完成" "释放空间约 ${cleared_mb} MB"
 fi
