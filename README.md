@@ -22,3 +22,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/leuxinovo/clearvps/refs/head
 ```
 bash <(curl -fsSL https://raw.githubusercontent.com/leuxinovo/clearvps/refs/heads/main/switch-bbr.sh)
 ```
+#### 切换tcp拥堵协议
+```
+bash <(curl -sL https://raw.githubusercontent.com/leuxinovo/clearvps/main/switch_to_cubic.sh)
+```
