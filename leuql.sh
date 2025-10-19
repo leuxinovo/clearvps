@@ -2,6 +2,7 @@
 # ======================================================================
 # 🌙 Leu 清理脚本 • Ultra-Min Server Trim (Debian/Ubuntu & AlmaLinux)
 # 目标：在不影响 BT/站点/DB/PHP/SSH 的前提下，尽可能“系统极简 + 深度清理”
+# 并增加 Docker 清理支持
 # ======================================================================
 
 set -euo pipefail
@@ -122,6 +123,15 @@ fi
 NI "find / -xdev -type d -name '__pycache__' -prune -exec rm -rf {} + 2>/dev/null || true"
 NI "find / -xdev -type f -name '*.pyc' -delete 2>/dev/null || true"
 ok "系统瘦身完成"
+
+# ====== Docker 清理 =======
+title "🐳 Docker 清理" "清理未使用的镜像、容器、卷"
+if command -v docker >/dev/null 2>&1; then
+    docker system prune -af --volumes >/dev/null 2>&1 || true
+    ok "Docker 清理完成"
+else
+    warn "未检测到 Docker，跳过"
+fi
 
 # ====== 汇总 =======
 title "📊 汇总报告" "展示清理后资源状态"
