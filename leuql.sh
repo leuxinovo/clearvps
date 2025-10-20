@@ -130,7 +130,7 @@ NI "find / -xdev -type f -name '*.pyc' -delete 2>/dev/null || true"
 ok "系统瘦身完成"
 
 # ====== Docker 清理 =======
-title "🐳 Docker 清理" "清理未使用的镜像、容器、卷"
+title "🐳 Docker清理" "清理未使用的镜像、容器、卷"
 if command -v docker >/dev/null 2>&1; then
     docker system prune -af --volumes >/dev/null 2>&1 || true
     ok "Docker 清理完成"
