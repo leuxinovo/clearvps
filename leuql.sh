@@ -133,9 +133,9 @@ ok "系统瘦身完成"
 title "🐳 Docker清理" "清理未使用的镜像、容器、卷"
 if command -v docker >/dev/null 2>&1; then
     docker system prune -af --volumes >/dev/null 2>&1 || true
-    ok "Docker 清理完成"
+    ok "Docker清理完成"
 else
-    warn "未检测到 Docker，跳过"
+    warn "未检测到Docker 跳过"
 fi
 
 # ====== 清理后记录磁盘可用空间 =======
