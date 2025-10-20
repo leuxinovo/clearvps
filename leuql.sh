@@ -133,33 +133,39 @@ else
 fi
 
 # ======================================================================
-title "💻 旧内核清理" "仅保留当前内核"
-if [ "$PKG" = "apt" ]; then
-  CURRENT_KERNEL=$(uname -r)
-  old_kernels=$(dpkg --list | grep 'linux-image-[0-9]' | awk '{print $2}' | grep -v "$CURRENT_KERNEL" || true)
-  if [[ -n "$old_kernels" ]]; then
-    apt-get -y purge $old_kernels >/dev/null 2>&1 || true
-    ok "旧内核清理完成"
-  else
-    log "没有可清理的旧内核"
-  fi
-fi
 
-# ======================================================================
-title "💾 Swap 管理" "安全清理已启用 swap"
-ACTIVE_SWAP=$(swapon --show=NAME --noheadings | head -n1 || true)
-MEM_FREE=$(free -m | awk '/^Mem:/ {print $7}')
-if [[ -n "$ACTIVE_SWAP" ]]; then
-    if [ "$MEM_FREE" -lt 500 ]; then
-        warn "内存空闲 <500MB，跳过 swap 清理以防 OOM"
-    else
-        log "检测到已启用 swap：$ACTIVE_SWAP，安全清理 swap ..."
-        swapoff "$ACTIVE_SWAP" 2>/dev/null || true
-        swapon "$ACTIVE_SWAP" 2>/dev/null || true
-        ok "已安全清理 swap 并恢复：$ACTIVE_SWAP"
-    fi
+# ====== 旧内核（保留当前+最新）======
+title "🧰 内核清理" "仅保留当前与最新版本"
+if [ "$PKG" = "apt" ]; then
+  CURK="$(uname -r)"
+  mapfile -t KS < <(dpkg -l | awk '/linux-image-[0-9]/{print $2}' | sort -V)
+  KEEP=("linux-image-${CURK}")
+  LATEST="$(printf "%s\n" "${KS[@]}" | grep -v "$CURK" | tail -n1 || true)"
+  [[ -n "${LATEST:-}" ]] && KEEP+=("$LATEST")
+  PURGE=(); for k in "${KS[@]}"; do [[ " ${KEEP[*]} " == *" $k "* ]] || PURGE+=("$k"); done
+  ((${#PURGE[@]})) && NI "apt-get -y purge ${PURGE[*]} >/dev/null 2>&1 || true"
+elif [ "$PKG" = "dnf" ] || [ "$PKG" = "yum" ]; then
+  CURK_ESC="$(uname -r | sed 's/\./\\./g')"
+  mapfile -t RMK < <(rpm -q kernel-core kernel | grep -vE "$CURK_ESC" | sort -V | head -n -1 || true)
+  ((${#RMK[@]})) && (dnf -y remove "${RMK[@]}" >/dev/null 2>&1 || yum -y remove "${RMK[@]}" >/dev/null 2>&1 || true)
+fi
+ok "内核清理完成"
+
+# ====== 内存/CPU 优化（深度）======
+title "⚡ 内存优化" "低负载回收缓存"
+LOAD1=$(awk '{print int($1)}' /proc/loadavg)
+MEM_AVAIL_KB=$(awk '/MemAvailable/{print $2}' /proc/meminfo)
+MEM_TOTAL_KB=$(awk '/MemTotal/{print $2}' /proc/meminfo)
+PCT=$(( MEM_AVAIL_KB*100 / MEM_TOTAL_KB ))
+if (( LOAD1 <= 2 && PCT >= 30 )); then
+  log "条件满足(Load1=${LOAD1}, MemAvail=${PCT}%)，执行回收"
+  sync
+  echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || echo 1 > /proc/sys/vm/drop_caches 2>/dev/null || true
+  [[ -w /proc/sys/vm/compact_memory ]] && echo 1 > /proc/sys/vm/compact_memory || true
+  sysctl -w vm.swappiness=10 >/dev/null 2>&1 || true
+  ok "内存/CPU 回收完成"
 else
-    warn "未检测到启用 swap，跳过 swap 清理"
+  warn "跳过回收（Load1=${LOAD1}, MemAvail=${PCT}%），避免卡顿/断连"
 fi
 
 # ======================================================================
