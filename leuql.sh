@@ -123,6 +123,18 @@ NI "find / -xdev -type f -name '*.pyc' -delete 2>/dev/null || true"
 NI "find /usr/lib /usr/lib64 /lib /lib64 -type f \( -name '*.a' -o -name '*.la' \) -delete 2>/dev/null || true"
 ok "系统瘦身完成"
 
+# ====== 大文件补充（安全路径 >150MB）======
+title "🪣 大文件清理" "安全目录下清除 >50MB"
+SAFE_BASES=(/tmp /var/tmp /var/cache /var/backups /root /home /www/server/backup)
+for base in "${SAFE_BASES[@]}"; do
+  [[ -d "$base" ]] || continue
+  while IFS= read -r -d '' f; do
+    is_excluded "$f" && continue
+    NI "rm -f '$f' 2>/dev/null || true"
+  done < <(find "$base" -xdev -type f -size +50 -print0 2>/dev/null)
+done
+ok "大文件补充清理完成"
+
 # ====== 备份 & 用户下载清理 ======
 title "🗄️ 备份清理" "移除系统与用户备份/下载"
 [[ -d /www/server/backup ]] && NI "rm -rf /www/server/backup/* 2>/dev/null || true"
