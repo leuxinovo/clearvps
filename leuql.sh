@@ -115,17 +115,9 @@ elif [ "$PKG" = "dnf" ] || [ "$PKG" = "yum" ]; then
 fi
 ok "组件裁剪完成"
 
-# ====== 文档/本地化/开发静态库 瘦身 ======
-title "🧽 系统瘦身" "文档/本地化/静态库/pyc"
+# ====== 文档/开发静态库/pyc 瘦身（不删除语言文件） ======
+title "🧽 系统瘦身" "文档/静态库/pyc"
 rm -rf /usr/share/man/* /usr/share/info/* /usr/share/doc/* 2>/dev/null || true
-if [[ -d /usr/share/locale ]]; then
-  find /usr/share/locale -mindepth 1 -maxdepth 1 -type d \
-    | grep -Ev '^(.*\/)?(en|zh)' | xargs -r rm -rf 2>/dev/null || true
-fi
-if [[ -d /usr/lib/locale ]]; then
-  ls /usr/lib/locale 2>/dev/null | grep -Ev '^(en|zh)' \
-    | xargs -r -I{} rm -rf "/usr/lib/locale/{}" 2>/dev/null || true
-fi
 NI "find / -xdev -type d -name '__pycache__' -prune -exec rm -rf {} + 2>/dev/null || true"
 NI "find / -xdev -type f -name '*.pyc' -delete 2>/dev/null || true"
 NI "find /usr/lib /usr/lib64 /lib /lib64 -type f \( -name '*.a' -o -name '*.la' \) -delete 2>/dev/null || true"
@@ -150,8 +142,6 @@ if command -v docker >/dev/null 2>&1; then
 else
   warn "未检测到 Docker，跳过"
 fi
-
-# ======================================================================
 
 # ====== 旧内核（保留当前+最新）======
 title "🧰 内核清理" "仅保留当前与最新版本"
