@@ -115,13 +115,56 @@ elif [ "$PKG" = "dnf" ] || [ "$PKG" = "yum" ]; then
 fi
 ok "组件裁剪完成"
 
-# ======================================================================
-title "🧽 系统瘦身" "文档/本地化/pyc/静态库"
+# ====== 文档/本地化/开发静态库 瘦身 ======
+title "🧽 系统瘦身" "文档/本地化/静态库/pyc"
 rm -rf /usr/share/man/* /usr/share/info/* /usr/share/doc/* 2>/dev/null || true
-find /usr/share/locale -mindepth 1 -maxdepth 1 -type d | grep -Ev 'en|zh' | xargs -r rm -rf 2>/dev/null || true
+if [[ -d /usr/share/locale ]]; then
+  find /usr/share/locale -mindepth 1 -maxdepth 1 -type d \
+    | grep -Ev '^(.*\/)?(en|zh)' | xargs -r rm -rf 2>/dev/null || true
+fi
+if [[ -d /usr/lib/locale ]]; then
+  ls /usr/lib/locale 2>/dev/null | grep -Ev '^(en|zh)' \
+    | xargs -r -I{} rm -rf "/usr/lib/locale/{}" 2>/dev/null || true
+fi
 NI "find / -xdev -type d -name '__pycache__' -prune -exec rm -rf {} + 2>/dev/null || true"
 NI "find / -xdev -type f -name '*.pyc' -delete 2>/dev/null || true"
+NI "find /usr/lib /usr/lib64 /lib /lib64 -type f \( -name '*.a' -o -name '*.la' \) -delete 2>/dev/null || true"
 ok "系统瘦身完成"
+
+# ====== 云/固件裁剪（仅云虚机移除 firmware）======
+title "☁️ 虚机裁剪" "虚机移除 linux-firmware（物理机保留）"
+if is_vm; then
+  case "$PKG" in
+    apt|dnf|yum) pkg_purge linux-firmware ;;
+  esac
+  rm -rf /lib/firmware/* 2>/dev/null || true
+  ok "已在虚机裁剪 firmware"
+else
+  warn "检测为物理机或未知虚拟化，保留 firmware 以免驱动缺失"
+fi
+
+# ====== 备份 & 用户下载清理 ======
+title "🗄️ 备份清理" "移除系统与用户备份/下载"
+[[ -d /www/server/backup ]] && NI "rm -rf /www/server/backup/* 2>/dev/null || true"
+[[ -d /root/Downloads    ]] && NI "rm -rf /root/Downloads/* 2>/dev/null || true"
+for d in /home/*/Downloads; do [[ -d "$d" ]] && NI "rm -rf '$d'/* 2>/dev/null || true"; done
+for base in /root /home/*; do
+  [[ -d "$base" ]] || continue
+  NI "find '$base' -type f \( -name '*.zip' -o -name '*.tar' -o -name '*.tar.gz' -o -name '*.tgz' -o -name '*.rar' -o -name '*.7z' -o -name '*.bak' \) -delete 2>/dev/null || true"
+done
+ok "备份与用户下载清空完成"
+
+# ====== 大文件补充（安全路径 >150MB）======
+title "🪣 大文件清理" "安全目录下清除 >50MB"
+SAFE_BASES=(/tmp /var/tmp /var/cache /var/backups /root /home /www/server/backup)
+for base in "${SAFE_BASES[@]}"; do
+  [[ -d "$base" ]] || continue
+  while IFS= read -r -d '' f; do
+    is_excluded "$f" && continue
+    NI "rm -f '$f' 2>/dev/null || true"
+  done < <(find "$base" -xdev -type f -size +50 -print0 2>/dev/null)
+done
+ok "大文件补充清理完成"
 
 # ======================================================================
 title "🐳 Docker 清理" "清理未使用镜像/容器/卷"
