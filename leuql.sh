@@ -128,18 +128,16 @@ else
 fi
 
 # ======================================================================
-title "💾 Swap 管理" "自动配置 swap"
-MEM_MB="$(awk '/MemTotal/{print int($2/1024)}' /proc/meminfo)"
-if [[ "$MEM_MB" -ge 2048 ]]; then
-  warn "内存 ≥ 2G，禁用 swap"
-  swapoff -a || true
+title "💾 Swap 管理" "清理已启用 swap 中的无用内存"
+ACTIVE_SWAP=$(swapon --show=NAME --noheadings | head -n1 || true)
+
+if [[ -n "$ACTIVE_SWAP" ]]; then
+    log "检测到已启用 swap：$ACTIVE_SWAP，清理无用 swap 内存 ..."
+    swapoff "$ACTIVE_SWAP" 2>/dev/null || true
+    swapon "$ACTIVE_SWAP" 2>/dev/null || true
+    ok "已清理 swap 并恢复：$ACTIVE_SWAP"
 else
-  SWAPFILE="/swapfile"
-  [[ -f "$SWAPFILE" ]] || fallocate -l $((MEM_MB/2))M "$SWAPFILE"
-  chmod 600 "$SWAPFILE"
-  mkswap "$SWAPFILE" >/dev/null || true
-  swapon "$SWAPFILE" || true
-  ok "单一 swap 文件启用：$SWAPFILE"
+    warn "未检测到启用 swap，跳过 swap 清理"
 fi
 
 # ======================================================================
