@@ -1,16 +1,22 @@
 #!/usr/bin/env bash
 # ======================================================================
-# 🌙 Leu Deep Clean • Ultra-Min Server Trim (Debian/Ubuntu & AlmaLinux)
+# 🌙 欢迎使用 Leu VPS 清理脚本 (Debian/Ubuntu & AlmaLinux)
+# 我的博客：https://blog.leuxx.de
 # 目标：在不影响 BT/站点/DB/PHP/SSH 的前提下，尽可能“系统极简 + 深度清理”
 # ======================================================================
 
 set -euo pipefail
 IFS=$'\n\t'
 
-SCRIPT_PATH="/root/deep-clean.sh"
+# ====== 欢迎信息 ======
+CYA="\033[36m"; C0="\033[0m"; B="\033[1m"
+echo -e "${B}${CYA}==============================================${C0}"
+echo -e "${B}${CYA}  欢迎使用 Leu 的清理脚本                  ${C0}"
+echo -e "${B}${CYA}  我的博客: https://blog.leuxx.de            ${C0}"
+echo -e "${B}${CYA}==============================================${C0}"
 
 # ====== 美观输出 ======
-C0="\033[0m"; B="\033[1m"; BLU="\033[38;5;33m"; GRN="\033[38;5;40m"; YEL="\033[38;5;178m"; RED="\033[38;5;196m"; CYA="\033[36m"; GY="\033[90m"
+BLU="\033[38;5;33m"; GRN="\033[38;5;40m"; YEL="\033[38;5;178m"; RED="\033[38;5;196m"; GY="\033[90m"
 hr(){ printf "${GY}%s${C0}\n" "────────────────────────────────────────────────────────"; }
 title(){ printf "\n${B}${BLU}[%s]${C0} %s\n" "$1" "$2"; hr; }
 ok(){ printf "${GRN}✔${C0} %s\n" "$*"; }
@@ -72,11 +78,11 @@ if [ "$PKG" = "apt" ]; then
 fi
 
 # ======================================================================
-title "🧾 日志清理" "清空旧日志 保留结构"
+title "🧾 日志清理" "清空旧日志并保留近 7 天日志"
 journalctl --rotate >/dev/null 2>&1 || true
-journalctl --vacuum-time=1d --vacuum-size=64M >/dev/null 2>&1 || true
+journalctl --vacuum-time=7d --vacuum-size=128M >/dev/null 2>&1 || true
 NI "find /var/log -type f \( -name '*.log' -o -name '*.old' -o -name '*.gz' -o -name '*.1' \) \
-  -not -path '/www/server/panel/logs/*' -not -path '/www/wwwlogs/*' -exec truncate -s 0 {} + 2>/dev/null || true"
+  -not -path '/www/server/panel/logs/*' -not -path '/www/wwwlogs/*' -mtime +7 -exec truncate -s 0 {} + 2>/dev/null || true"
 : > /var/log/wtmp  || true; : > /var/log/btmp  || true; : > /var/log/lastlog || true; : > /var/log/faillog || true
 ok "日志清理完成"
 
@@ -122,23 +128,37 @@ ok "系统瘦身完成"
 title "🐳 Docker 清理" "清理未使用镜像/容器/卷"
 if command -v docker >/dev/null 2>&1; then
   docker system prune -af --volumes >/dev/null 2>&1 || true
-  ok "Docker清理完成"
+  ok "Docker 清理完成"
 else
   warn "未检测到 Docker，跳过"
 fi
 
 # ======================================================================
-title "💾 Swap 管理" "清理已启用 swap 中的无用内存"
-ACTIVE_SWAP=$(swapon --show=NAME --noheadings | head -n1 || true)
-
-if [[ -n "$ACTIVE_SWAP" ]]; then
-    log "检测到已启用 swap：$ACTIVE_SWAP，清理无用 swap 内存 ..."
-    swapoff "$ACTIVE_SWAP" 2>/dev/null || true
-    swapon "$ACTIVE_SWAP" 2>/dev/null || true
-    ok "已清理 swap 并恢复：$ACTIVE_SWAP"
-else
-    warn "未检测到启用 swap，跳过 swap 清理"
+title "💻 旧内核清理" "仅保留当前内核"
+if [ "$PKG" = "apt" ]; then
+  CURRENT_KERNEL=$(uname -r)
+  old_kernels=$(dpkg --list | grep 'linux-image-[0-9]' | awk '{print $2}' | grep -v "$CURRENT_KERNEL" || true)
+  if [[ -n "$old_kernels" ]]; then
+    apt-get -y purge $old_kernels >/dev/null 2>&1 || true
+    ok "旧内核清理完成"
+  else
+    log "没有可清理的旧内核"
+  fi
 fi
+
+# ======================================================================
+title "💾 Swap 管理" "清理已启用 swap 中的无用内存"
+for swap_dev in $(swapon --show=NAME --noheadings); do
+    log "清理 swap: $swap_dev"
+    swapoff "$swap_dev" 2>/dev/null || true
+    swapon "$swap_dev" 2>/dev/null || true
+done
+ok "所有 swap 已清理"
+
+# ======================================================================
+title "🪶 内存缓存清理" "释放文件系统缓存"
+sync; echo 3 > /proc/sys/vm/drop_caches || true
+ok "内存缓存已清理"
 
 # ======================================================================
 title "🪶 磁盘 TRIM" "提升 SSD 性能"
