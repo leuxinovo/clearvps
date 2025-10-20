@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 # ======================================================================
-# 🌙 欢迎使用 Leu VPS 清理脚本 (Debian/Ubuntu & AlmaLinux)
-# 我的博客：https://blog.leuxx.de
+# 🌙 Leu Deep Clean • Ultra-Min Server Trim (Debian/Ubuntu & AlmaLinux)
 # 目标：在不影响 BT/站点/DB/PHP/SSH 的前提下，尽可能“系统极简 + 深度清理”
 # ======================================================================
 
 set -euo pipefail
 IFS=$'\n\t'
 
-# ====== 欢迎信息 ======
+# ====== 欢迎信息 / 博客 ======
 CYA="\033[36m"; C0="\033[0m"; B="\033[1m"
 echo -e "${B}${CYA}==============================================${C0}"
 echo -e "${B}${CYA}  欢迎使用 Leu 的清理脚本                  ${C0}"
@@ -78,11 +77,11 @@ if [ "$PKG" = "apt" ]; then
 fi
 
 # ======================================================================
-title "🧾 日志清理" "清空旧日志并保留近 7 天日志"
+title "🧾 日志清理" "清空旧日志 保留结构"
 journalctl --rotate >/dev/null 2>&1 || true
-journalctl --vacuum-time=7d --vacuum-size=128M >/dev/null 2>&1 || true
+journalctl --vacuum-time=1d --vacuum-size=64M >/dev/null 2>&1 || true
 NI "find /var/log -type f \( -name '*.log' -o -name '*.old' -o -name '*.gz' -o -name '*.1' \) \
-  -not -path '/www/server/panel/logs/*' -not -path '/www/wwwlogs/*' -mtime +7 -exec truncate -s 0 {} + 2>/dev/null || true"
+  -not -path '/www/server/panel/logs/*' -not -path '/www/wwwlogs/*' -exec truncate -s 0 {} + 2>/dev/null || true"
 : > /var/log/wtmp  || true; : > /var/log/btmp  || true; : > /var/log/lastlog || true; : > /var/log/faillog || true
 ok "日志清理完成"
 
@@ -128,7 +127,7 @@ ok "系统瘦身完成"
 title "🐳 Docker 清理" "清理未使用镜像/容器/卷"
 if command -v docker >/dev/null 2>&1; then
   docker system prune -af --volumes >/dev/null 2>&1 || true
-  ok "Docker 清理完成"
+  ok "Docker清理完成"
 else
   warn "未检测到 Docker，跳过"
 fi
@@ -147,18 +146,21 @@ if [ "$PKG" = "apt" ]; then
 fi
 
 # ======================================================================
-title "💾 Swap 管理" "清理已启用 swap 中的无用内存"
-for swap_dev in $(swapon --show=NAME --noheadings); do
-    log "清理 swap: $swap_dev"
-    swapoff "$swap_dev" 2>/dev/null || true
-    swapon "$swap_dev" 2>/dev/null || true
-done
-ok "所有 swap 已清理"
-
-# ======================================================================
-title "🪶 内存缓存清理" "释放文件系统缓存"
-sync; echo 3 > /proc/sys/vm/drop_caches || true
-ok "内存缓存已清理"
+title "💾 Swap 管理" "安全清理已启用 swap"
+ACTIVE_SWAP=$(swapon --show=NAME --noheadings | head -n1 || true)
+MEM_FREE=$(free -m | awk '/^Mem:/ {print $7}')
+if [[ -n "$ACTIVE_SWAP" ]]; then
+    if [ "$MEM_FREE" -lt 500 ]; then
+        warn "内存空闲 <500MB，跳过 swap 清理以防 OOM"
+    else
+        log "检测到已启用 swap：$ACTIVE_SWAP，安全清理 swap ..."
+        swapoff "$ACTIVE_SWAP" 2>/dev/null || true
+        swapon "$ACTIVE_SWAP" 2>/dev/null || true
+        ok "已安全清理 swap 并恢复：$ACTIVE_SWAP"
+    fi
+else
+    warn "未检测到启用 swap，跳过 swap 清理"
+fi
 
 # ======================================================================
 title "🪶 磁盘 TRIM" "提升 SSD 性能"
