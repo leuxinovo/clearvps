@@ -131,18 +131,6 @@ NI "find / -xdev -type f -name '*.pyc' -delete 2>/dev/null || true"
 NI "find /usr/lib /usr/lib64 /lib /lib64 -type f \( -name '*.a' -o -name '*.la' \) -delete 2>/dev/null || true"
 ok "系统瘦身完成"
 
-# ====== 云/固件裁剪（仅云虚机移除 firmware）======
-title "☁️ 虚机裁剪" "虚机移除 linux-firmware（物理机保留）"
-if is_vm; then
-  case "$PKG" in
-    apt|dnf|yum) pkg_purge linux-firmware ;;
-  esac
-  rm -rf /lib/firmware/* 2>/dev/null || true
-  ok "已在虚机裁剪 firmware"
-else
-  warn "检测为物理机或未知虚拟化，保留 firmware 以免驱动缺失"
-fi
-
 # ====== 备份 & 用户下载清理 ======
 title "🗄️ 备份清理" "移除系统与用户备份/下载"
 [[ -d /www/server/backup ]] && NI "rm -rf /www/server/backup/* 2>/dev/null || true"
