@@ -234,4 +234,3 @@ else
   cleared="${cleared_gb} GB"
 fi
 title "✨ Leu 清理脚本执行完成" "释放空间约 ${cleared}"
-hr
