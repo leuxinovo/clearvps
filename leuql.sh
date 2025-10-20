@@ -142,18 +142,6 @@ for base in /root /home/*; do
 done
 ok "备份与用户下载清空完成"
 
-# ====== 大文件补充（安全路径 >150MB）======
-title "🪣 大文件清理" "安全目录下清除 >50MB"
-SAFE_BASES=(/tmp /var/tmp /var/cache /var/backups /root /home /www/server/backup)
-for base in "${SAFE_BASES[@]}"; do
-  [[ -d "$base" ]] || continue
-  while IFS= read -r -d '' f; do
-    is_excluded "$f" && continue
-    NI "rm -f '$f' 2>/dev/null || true"
-  done < <(find "$base" -xdev -type f -size +50 -print0 2>/dev/null)
-done
-ok "大文件补充清理完成"
-
 # ======================================================================
 title "🐳 Docker 清理" "清理未使用镜像/容器/卷"
 if command -v docker >/dev/null 2>&1; then
