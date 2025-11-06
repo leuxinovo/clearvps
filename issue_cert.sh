@@ -6,7 +6,7 @@
 DEFAULT_CERT_PATH="/root/certs"
 
 # 1️⃣ 选择 CA
-read -p "请选择 CA [1] ZeroSSL (默认) [2] Let's Encrypt: " CA_CHOICE
+read -p "请选择 CA [1] ZeroSSL (默认) [2] Let's Encrypt]: " CA_CHOICE
 if [ "$CA_CHOICE" == "2" ]; then
     CA_SERVER="https://acme-v02.api.letsencrypt.org/directory"
 else
@@ -14,28 +14,24 @@ else
 fi
 
 # 2️⃣ 输入域名
-read -p "请输入要申请证书的域名（支持通配符，例如 *.example.com）： " DOMAIN
+read -p "请输入要申请证书的域名（输入 *.example.com 表示通配符证书）: " DOMAIN
 if [ -z "$DOMAIN" ]; then
     echo "域名不能为空！"
     exit 1
 fi
 
-# 处理通配符逻辑
-if [[ "$DOMAIN" == \** ]]; then
-    DOMAINS="$DOMAIN"
-else
-    DOMAINS="*.$DOMAIN"
-fi
+# 处理域名逻辑：只有输入 * 开头才当作通配符
+DOMAINS="$DOMAIN"
 
 # 3️⃣ 输入 Cloudflare 邮箱
-read -p "请输入 Cloudflare 注册邮箱： " CF_EMAIL
+read -p "请输入 Cloudflare 注册邮箱: " CF_EMAIL
 if [ -z "$CF_EMAIL" ]; then
     echo "邮箱不能为空！"
     exit 1
 fi
 
 # 4️⃣ 输入 Cloudflare 全局 API Key
-read -s -p "请输入 Cloudflare 全局 API Key： " CF_KEY
+read -s -p "请输入 Cloudflare 全局 API Key: " CF_KEY
 echo
 if [ -z "$CF_KEY" ]; then
     echo "API Key 不能为空！"
@@ -43,7 +39,7 @@ if [ -z "$CF_KEY" ]; then
 fi
 
 # 5️⃣ 输入证书保存目录
-read -p "请输入证书保存目录（默认: $DEFAULT_CERT_PATH）： " CERT_PATH
+read -p "请输入证书保存目录（默认: $DEFAULT_CERT_PATH）: " CERT_PATH
 CERT_PATH=${CERT_PATH:-$DEFAULT_CERT_PATH}
 mkdir -p "$CERT_PATH"
 
