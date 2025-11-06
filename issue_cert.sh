@@ -7,7 +7,15 @@
 # 默认证书保存目录
 DEFAULT_CERT_PATH="/root/certs"
 
-# 检测 Warp 是否开启（通过 wg 或 curl IPv6 外网）
+# 选择 CA: ZeroSSL 或 Let's Encrypt
+read -p "请选择 CA [1] ZeroSSL (默认) [2] Let's Encrypt: " CA_CHOICE
+if [ "$CA_CHOICE" == "2" ]; then
+    CA_SERVER="https://acme-v02.api.letsencrypt.org/directory"
+else
+    CA_SERVER="https://acme.zerossl.com/v2/DV90"
+fi
+
+# 检测 Warp 是否开启（通过 IPv6 外网访问）
 WARP_STATUS=$(curl -6 -s https://ifconfig.co | grep -q ':' && echo "enabled" || echo "disabled")
 if [ "$WARP_STATUS" == "enabled" ]; then
     echo "检测到 VPS 可能开启了 Warp，强烈建议使用 DNS-01 模式申请证书"
@@ -53,9 +61,18 @@ if [ ! -f ~/.acme.sh/acme.sh ]; then
     source ~/.bashrc
 fi
 
+# 注册账户（ZeroSSL 必须）
+if [ "$CA_SERVER" == "https://acme.zerossl.com/v2/DV90" ]; then
+    echo "注册 ZeroSSL 账户..."
+    ~/.acme.sh/acme.sh --register-account -m "$CF_EMAIL" --server $CA_SERVER || {
+        echo "ZeroSSL 账户注册失败，请检查邮箱或网络"
+        exit 1
+    }
+fi
+
 # 申请证书（DNS-01 验证，自动支持 IPv6）
 echo "开始申请证书..."
-~/.acme.sh/acme.sh --issue --dns dns_cf -d "$DOMAIN" -d "*.${DOMAIN#*.}" || {
+~/.acme.sh/acme.sh --issue --dns dns_cf -d "$DOMAIN" -d "*.${DOMAIN#*.}" --server $CA_SERVER || {
     echo "证书申请失败，请检查 API Key、域名解析或网络"
     exit 1
 }
