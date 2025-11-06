@@ -1,6 +1,6 @@
 #!/bin/bash
 # ===================================================
-# acme.sh 自动申请 Cloudflare DNS 通配符证书脚本（完善版）
+# acme.sh 自动申请 Cloudflare DNS 通配符证书脚本（兼容 dash/sh）
 # 特性：
 # - IPv6 VPS 支持
 # - Warp 提示
@@ -9,6 +9,7 @@
 # - 默认下载路径
 # - ZeroSSL / Let's Encrypt CA 可选
 # - 自动安装 cron 并确保证书自动续期
+# - acme.sh 安装兼容 dash/sh
 # ===================================================
 
 # 默认证书保存目录
@@ -23,9 +24,11 @@ else
 fi
 
 # 2️⃣ 检测 Warp 是否开启（通过 IPv6 外网访问）
-WARP_STATUS=$(curl -6 -s https://ifconfig.co | grep -q ':' && echo "enabled" || echo "disabled")
-if [ "$WARP_STATUS" == "enabled" ]; then
-    echo "检测到 VPS 可能开启了 Warp，强烈建议使用 DNS-01 模式申请证书"
+if command -v curl >/dev/null 2>&1; then
+    WARP_STATUS=$(curl -6 -s https://ifconfig.co | grep -q ':' && echo "enabled" || echo "disabled")
+    if [ "$WARP_STATUS" == "enabled" ]; then
+        echo "检测到 VPS 可能开启了 Warp，强烈建议使用 DNS-01 模式申请证书"
+    fi
 fi
 
 # 3️⃣ 输入域名
@@ -64,18 +67,23 @@ export CF_Email="$CF_EMAIL"
 # 7️⃣ 检查 acme.sh 是否安装
 if [ ! -f ~/.acme.sh/acme.sh ]; then
     echo "acme.sh 未安装，正在安装..."
-    curl https://get.acme.sh | sh --force || { echo "acme.sh 安装失败，请检查网络或权限"; exit 1; }
-    source ~/.bashrc
+    curl https://get.acme.sh | bash || { echo "acme.sh 安装失败，请检查网络或权限"; exit 1; }
+    # 更新环境变量
+    if [ -f ~/.bashrc ]; then
+        source ~/.bashrc
+    elif [ -f ~/.profile ]; then
+        source ~/.profile
+    fi
 fi
 
 # 8️⃣ 安装 cron 并确保续期
 if ! command -v crontab >/dev/null 2>&1; then
     echo "检测到系统未安装 cron，正在尝试安装..."
     if command -v apt >/dev/null 2>&1; then
-        apt update && apt install cron -y
+        apt update && apt install -y cron
         systemctl enable cron && systemctl start cron
     elif command -v yum >/dev/null 2>&1; then
-        yum install cronie -y
+        yum install -y cronie
         systemctl enable crond && systemctl start crond
     else
         echo "未检测到 apt 或 yum，请手动安装 cron，否则证书无法自动续期"
@@ -86,7 +94,7 @@ fi
 ~/.acme.sh/acme.sh --install-cronjob || echo "警告：acme.sh 自动续期任务可能未成功安装"
 
 # 9️⃣ 注册 ZeroSSL 账户（如果选择 ZeroSSL）
-if [ "$CA_SERVER" == "https://acme.zerossl.com/v2/DV90" ]; then
+if [ "$CA_SERVER" = "https://acme.zerossl.com/v2/DV90" ]; then
     echo "注册 ZeroSSL 账户..."
     ~/.acme.sh/acme.sh --register-account -m "$CF_EMAIL" --server $CA_SERVER || {
         echo "ZeroSSL 账户注册失败，请检查邮箱或网络"
