@@ -30,7 +30,7 @@ const inArg = $arguments;
 const KEEP = inArg.keep == undefined ? "" : decodeURI(inArg.keep);
 
 const KEEP_NAMES = KEEP
-  ? KEEP.split("+").map((s) => s.trim()).filter(Boolean)
+  ? KEEP.split(",").map((s) => s.trim()).filter(Boolean)
   : [];
 
 // 判断节点是否属于保护名单
