@@ -26,7 +26,7 @@ const inArg = $arguments;
 // 用法：
 // #keep=🇯🇵日本高速01|CTCU|0.5x
 //
-// 多个名称使用 + 分隔
+// 多个名称使用 , 分隔
 const KEEP = inArg.keep == undefined ? "" : decodeURI(inArg.keep);
 
 const KEEP_NAMES = KEEP
