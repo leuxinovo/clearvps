@@ -6,6 +6,10 @@ bash <(curl -sL https://raw.githubusercontent.com/leuxinovo/clearvps/main/agent.
 ```
 bash <(curl -sL https://raw.githubusercontent.com/leuxinovo/clearvps/main/leuql.sh)
 ```
+#### 申请证书脚本
+```
+bash <(curl -fsSL https://raw.githubusercontent.com/leuxinovo/clearvps/refs/heads/main/cert-manager.sh)
+```
 #### ssh公钥一键导入脚本
 ```
 bash <(curl -sL https://raw.githubusercontent.com/leuxinovo/clearvps/main/sshkey.sh) -g github用户名
